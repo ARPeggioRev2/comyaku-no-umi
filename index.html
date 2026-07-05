@@ -125,17 +125,64 @@ html,body{
 
 .o-title-ja {
   font-family: var(--font-ja-heading);
-  font-size: clamp(28px, 11vw, 52px);
+  font-size: clamp(24px, 6vw, 52px);
   font-weight: 700;
   line-height: 1.15;
   margin: 0;
   letter-spacing: 0.04em;
   white-space: nowrap;
-  /* タイトルにパレットグラデーションを薄くかける */
   background: linear-gradient(135deg, var(--gray-dark) 0%, #3a4a5c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ================================================================
+   LANDSCAPE / WIDE SCREEN OPENING
+================================================================ */
+@media (orientation: landscape), (min-width: 600px) {
+  #opening {
+    padding: max(20px, env(safe-area-inset-top)) 5vw max(20px, env(safe-area-inset-bottom));
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0 5vw;
+  }
+  .o-top {
+    width: 100%;
+    order: 0;
+    margin-bottom: 0;
+  }
+  .o-visual {
+    flex: 0 0 auto;
+    width: min(40vh, 45vw);
+    order: 1;
+    gap: 0;
+  }
+  #o-canvas {
+    max-height: 38vh;
+    width: 100%;
+  }
+  .o-text {
+    order: 2;
+    width: auto;
+    text-align: left;
+    flex: 0 0 auto;
+    gap: 10px;
+  }
+  .o-title-ja {
+    font-size: clamp(24px, 5vw, 52px);
+    white-space: nowrap;
+  }
+  .o-subtitle {
+    text-align: left;
+  }
+  .o-cta {
+    order: 3;
+    width: 100%;
+    margin-top: 16px;
+  }
 }
 
 .o-cta{
@@ -263,7 +310,7 @@ html,body{
 ================================================================ */
 #settings-overlay {
   position: fixed; inset: 0; z-index: 100;
-  background: rgba(34,36,38,0.35);
+  background: rgba(34,36,38,0.25);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   opacity: 0; pointer-events: none;
@@ -275,25 +322,21 @@ html,body{
 
 #settings-panel {
   position: absolute;
-  bottom: 0; left: 0; right: 0;
+  top: 0; right: 0; bottom: 0;
+  width: min(280px, 80vw);
   background: var(--white);
-  border-radius: 24px 24px 0 0;
-  padding: 0 0 max(24px, env(safe-area-inset-bottom)) 0;
-  transform: translateY(100%);
+  border-radius: 20px 0 0 20px;
+  padding: max(48px, env(safe-area-inset-top)) 0 max(24px, env(safe-area-inset-bottom)) 0;
+  transform: translateX(100%);
   transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-  max-height: 80vh;
   overflow-y: auto;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.10);
 }
 #settings-overlay.open #settings-panel {
-  transform: translateY(0);
+  transform: translateX(0);
 }
 
-.settings-handle {
-  width: 36px; height: 4px;
-  background: var(--gray-light);
-  border-radius: 2px;
-  margin: 12px auto 20px;
-}
+.settings-handle { display: none; }
 
 .settings-section {
   padding: 0 24px 20px;
@@ -397,18 +440,37 @@ input[type=range].vol-slider::-moz-range-thumb {
 #bg-file-input { display: none; }
 
 /* Credit */
-.credit-block {
+.pop-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.pop-dot-item {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
   padding: 16px 24px 0;
   display: flex; flex-direction: column; gap: 4px;
 }
+.credit-block {
+  padding: 16px 36px 8px;
+  display: flex; flex-direction: column; gap: 5px;
+  border-top: 1px solid var(--gray-light);
+  margin-top: 4px;
+}
 .credit-line {
+  display: block;
   font-family: var(--font-en-body);
   font-size: 9px; color: var(--gray-mid);
-  letter-spacing: 0.05em; line-height: 1.6;
+  letter-spacing: 0.03em; line-height: 1.7;
+  word-break: break-word;
 }
 .credit-line.disclaimer {
   font-size: 9px; color: var(--gray-mid);
-  margin-top: 4px;
+  margin-top: 4px; line-height: 1.7;
 }
 </style>
 <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIuOBk+OBv+OCg+OBj+OBruOBhuOBvyIsICJzaG9ydF9uYW1lIjogIuOBk+OBv+OCg+OBj+OBruOBhuOBvyIsICJkZXNjcmlwdGlvbiI6ICJDby1NWUFLVSBGYW4gQXJ0IOKAkyDjgqTjg7Pjgr/jg6njgq/jg4bjgqPjg5bjgqLjg7zjg4jvvIbjgrjjgqfjg43jg6zjg7zjg4bjgqPjg5bjg5/jg6Xjg7zjgrjjg4Pjgq8iLCAic3RhcnRfdXJsIjogIi4iLCAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwgImJhY2tncm91bmRfY29sb3IiOiAiI0ZGRkZGRiIsICJ0aGVtZV9jb2xvciI6ICIjQTc4RUMzIiwgImxhbmciOiAiamEiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFNQUFBQURBQ0FZQUFBQlMzR3dIQUFBSUQwbEVRVlI0bk8yZHlYVWNSeEJFcytmQkxCb2dFK2dDajNSRU9zb0V5UVRlS2I5YWgza0ZOQVk5MDFzdEVaSHhieEpKVEZkbS9LcnFiVEFGR1BNOHo2T1BvUWYvL3ZYZnAvLysvdlBib0NQcHl6Uk4wK2hqV0RMMFlMS0VmY2xqOEIvSklzS1NrVkowLytDTW9TOXNoYitRVVlKQ2J4bTZmVmptNEVmc0QzOGhzd1FSL1VSNGEvMEIyWU52emxGeTAxcUVaai9jd2YvZzZPeGZ5TDRLTEdrbFF2VVZ3TUUzTFdpMUl0eHEvakNIMzdTbWRzYXFyQUFPdnVsSnpkWGc4Z3JnOEp0UjFNamVKUUVjZmpPYXF4azhMWUREYjFDNGtzVlRBamo4Qm8yem1Ud3NnTU52VURtVHpVTUNPUHdHbmFNWjNTMkF3MjlZT0pMVlhRSTQvSWFOdlpuZEZNRGhONnpzeVc3VlJ5R01ZZU9sQUo3OURUdGJHWDRxZ01OdlZIaVZaVytCVEdwV0JmRHNiOVI0bG1tdkFDWTFYd1R3N0c5VVdjdTJWd0NUbWs5dmhQV2UvZGRlRnZlTDROcU03dms4ei9QeVRiTG1YNHV5eHF0dlNTaC9aaEcwUU8zNSt4YW8xK3kvOXl0Q3puNlZpTUVEcmVmTHJIYzlCemc2UUV2QUQzclA0VStDTFFFdkRMMjdSZlRaL2x3cEJrTWh6V2ZRKzEweUQ3OENGQ3dCRDB5OW9oRWdncXV3V1dIckVaVUFFWHdGemdSamIrZ0VpT0FzdERxc1BibjF1djVmK3lZSGE4RVZxZDJMWGpmRTVubWVLVmVBZ2lVWUQzc1B1Z3JRd216MkJqRFRvdmE5SDRmb3ZnSllBZzBVd2g4eDZDVFlFbkNqRXY2SWdWZUJMQUVuU3VHUEdId1oxQkp3b1JiK0NJRDdBSmFBQThYd1J3QUlFR0VKMEZFTmYwVEVoUFFTdkVLaFc0dW5NQjZVOEVlQUNSREJWL0RSS3czYjJKRENId0VvUUFSKzRVZUgvaG5vWTBRTGZ3U29BQkdZRFVBTi9pT0k0MFFNZndTd0FCRTRqV0FKL2lNb1kwVU5md1M0QUJGakc4SWEvRWRHamhjNS9CRUVBa1QwYjR4SzhCL3BQV2IwOEVlQTNBZllvdWQ5QXRYd1IvUWRNMFA0STBoV2dFTExSaWtIZjQyVzQyWUpmd1NaQUJINWdzb0dVL2dqU0xaQVM5Z0tuQW5HM3RDdEFJV3NLOEdla0kyb0RXUDRJNGdGaU1naFFZMWdxVDJmVkJOcUFTSjBKV0I1UXBZNS9CRUNBa1JvU2RBalVMWHF4UjcrQ01LVDREVVVHaEhSYnh3MVBrZWw1aElDUlBBM3BQZnhYL2s4OWxvdmtkZ0NMV0hiRGlHRTZVak5FSTYzSmpJclFJR3BRU2pIdXZjNFVJNjNKbklDUkdnMmFqU3FOWlVVZ0FHMFFLRWRUeThrQlVBL0QwQU5XOFpIeENVRlFBWTEvQVgwNDZ1Tm5BQ3FNeFVDaXJXVkVnQzlRU3l6YTZhdGtKUUF4aHhGUmdEMG1ZbGw5aTlrV1FYZVJoK0FxY1AwNDlmVFA1di8vcVBqa1hBaHNRSW96VWhIbVg3OGVobit2WC9uS0NvMTl3cEF5cGxBbDMvakZlRUQraFdBWVNhcXZmKy9PcHZ2L2ZkYng4MVEreTNvQmNoR3JhMU03UzBSSzlRQ0tNeEFSNmdkMmhvL2o3MEgxQUlZY3hVTFFFS3JMVXYyclJDdEFPeExyeExNdmFBVklCT3RaK25NcTRBRk1LbXhBQ1kxbEFLdzdUblpqcmR3NUxoWngwZ3BnREcxc0FBbU5SYkFwTVlDZE9MS0hybjEwNXRyUDU5MVQzK1UxY2Voc3d6ZTFBVTlOMnRQdDM3NmJsRDBBU2h3NWRIb0ZqZXNNczcreXg2OGI0SFVCMjFNWVpuMTIrUC9NRzFCT2hmSU9Qc1h5amg5RWp3QUJBa3loMy9KOU0rZnY2VitQd0FUbzg0SEhQNFAvRkk4S1NYRVIwVHd5L0JmOFFvd21Gb3Z6Ri81WHFDc3MzK0VCWUJoeERmSFpRNSs0Y2IybFgycTlBNmp3MytmZEh3VkNJaGVvWFQ0UDNpL0UreWlZTUh5bStKWktmWDFveERnMUJEQmZmM01zcWFydnlmWUJjTmxqeER1M3pxYkQ4T3g0QVpqd25oQnhTZkJKalVXd0tUR0FwalVXQUNUR2tvQkdFKzIxR0h0Q2FVQXh0VENBcGpVV0FDVEdsb0JXUGVjaWpEM2dsWUFZMnBnQVV4cXFBVmdYbnBWWU84QnRRREdYSVZlQVBZWmlCbUYydE1MWU13VkpBUlFtSW5ZVUttNWhBREduRVZHQUpVWmlRR2xXc3NJWU13WnBBUlFtcGxRVWF1eGxBQVJlZzFDUXJHMmNnSVljd1JKQVJSbnF0R28xbFJTQUdQMklpbUF2emlyUHFvMWxSTkF0VkVJS05aV1NnREZCcUdoVm1NWkFkUWFnNHhTclNVRVVHb0lDeW8xcHhkQXBSR01LTlNlV2dDRkJyREQzZ05hQWRnTHJ3UnpMeWdGWUM2NEtxdzlvUk9BdGRBWllPd05sUUF0Q3Z6OTV6Zlo1MXhlMFdyY2JCTFEvSTZ3VnVIdjhUbEk5Qm96eTZSQ3NRTDBiQkJMNDg3UWM4d3NFd244Q2pCeWRtSnA0aFlqeDRzK29VQUxnTklRVmhGUXhvb3NBYXdBaUkxZ0VRRnhuS2dTUUFxQTNnQlVFZERIaUNnQm5BQnNoUjh0QTl2WTBDU0FFa0NoNEsyRlVCZ1BrZ1F3QWlnWCt1elkySS8vRlNoamc3Z1BvRnhnQlpUdkV3d1h3T0huUUZXQ29RSTQvRndvU2pCTUFJZWZFelVKaGdqZzhIT2pKRUYzQVJ4K0RWUWs2Q3FBdzYrRmdnVERyd0pkd2VFZkQzc1BidE0wVFQwK3FMYlo3SVZYb25ZdmVxMEMwelJObEN1QXc0OEhhMC9vQkdBdGRBWVllME1sQUdPQnM4SFdJeG9CMkFxYkdhWmUzU0x1SndPdFAraEtVWmdLYXU2Zzk3dGtIbjRGY1BoNVllaGRWd0dPRm9TaGdPWTE2RDEvRjZEWC9ZQzlBM1Q0ZFVEcitUTHJiMTArOFlFeTBMVWJIZzYrSnFnOS96THJvN3dpcVFUN0s1RktQTzUwNEUrQ2pXbkpGd0Y2blFzWTA1dTFiSHNGTUtsWkZjQ3JnRkhqV2FhOUFwalVQQlhBcTRCUjRWV1dYNjRBbHNDd3M1VmhiNEZNYWpZRjhDcGdXTm1UM1YwcmdDVXdiT3pON080dGtDVXdMQnpKNnFGekFFdGcwRG1hMGNNbndaYkFvSEltbTZldUFsa0NnOGJaVEo2K0RHb0pEQXBYc25qcFBvQWxNS081bXNITE44SXNnUmxGamV4VmVTV3lISWpmSmpNOXFEbnBWbjBVd3F1QmFVM3RqRlYvS2Q2cmdXbEJxOG0xK1l4dEVlNGNmVEhlTDhUZmFiMnJhUDYxS0Y0UnpCbDZiYWU3Nzlremk3QjNGY2c4Ky9jK2p4eDYwcHBSaGkwSk1vWi81TVVUdUtzMldhUjRGQ0ZMOE5HdUZQNFB2Mmp3RE5kWE9qTUFBQUFBU1VWT1JLNUNZSUk9IiwgInNpemVzIjogIjE5MngxOTIiLCAidHlwZSI6ICJpbWFnZS9wbmciLCAicHVycG9zZSI6ICJhbnkgbWFza2FibGUifSwgeyJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFnQUFBQUlBQ0FZQUFBRDBlTlQ2QUFBWnBFbEVRVlI0bk8zZHliWGJWaFlGVUZCTFlTbUFDc0VwZUtoSU5IUUtDc0VCT0MvV1FJdlNiOWlnZjdmWmUxcFZGZ2pjNXVDUlZsMG1RcnBlcjlmUjF3Q3doOHZsY2hsOURYem1vUXhpd1FQOElpQ000YWFmd0xJbmlwOC8vbnY2bi8vMS9kdEpWd0xQQ1FYSGM0TVBZT0VUeWF1bC80Z3dRQ1FDd2Y3YzBCMVkrRVMwZHZGL0pBZ1FrVUN3blJ1NGtxVlBaSHN0L3hzaGdNaUVnWFhjdEFVc2ZhTGJlL0YvSkFnUW5UQXdueHYxZ3FWUEZrY3YveHNoZ0N5RWdlZmNuQWNzZmpJNWEvbmZDQUZrSWdqYzkzWDBCVVJpNlFQVTgzYTJDd04vdUJHVHhVOXVaNy85M3pnRklETkJvSGtBc1BqSmJ0VHl2eEVDeUs1ekVHajVGWURGRDhBMC9ka0hIWU5BcXc5czhWUEo2TGYvRzZjQVZOSXBDTFE0QWJENEFaaWowNG5BbDlFWGNEVExINENsT3V5T3NnbW53OE9qcnlqSC96ZStCcUN5cXFjQjViNENzUGdCMkZQVnJ3VktmUVZnK1FOd2xHbzdwc1FKUUxXSEFrQk1sVTREMHA4QVdQNEFuSzNDN2trZEFDbzhBQUJ5eXI2RFVuNEZrUDJtQTFCRDVxOEUwcDBBV1A0QVJKTnhONlVLQUJsdk1BQTlaTnRSS2I0Q3lIWlRBZWdwMDFjQzRVOEFMSDhBc3Ntd3UwSUhnQXczRUFEdWliN0R3Z2FBNkRjT0FGNkp2TXRDQm9ESU53d0Fsb2k2MDhJRmdLZzNDZ0RXaXJqYlFnV0FpRGNJQVBZUWJjZUZDUURSYmd3QTdDM1NyZ3NSQUNMZEVBQTRVcFNkTnp3QVJMa1JBSENXQ0x0dmFBQ0ljQU1BWUlUUk8zQllBQmo5d1FGZ3RKRzdjRWdBc1B3QjRKZFJPL0gwQUdENUE4QjdJM2JqcVFIQThnZUErODdla2FjRkFNc2ZBSjQ3YzFlZUVnQXNmd0NZNTZ5ZE9menZBUUFBem5kNEFQRDJEd0RMbkxFN0R3MEFsajhBckhQMERqMHNBRmorQUxETmtidlVid0FBb0tGREFvQzNmd0RZeDFFN2RmY0FZUGtEd0w2TzJLMjdCZ0RMSHdDT3NmZU85UnNBQUdob3R3RGc3UjhBanJYbnJ0MGxBRmorQUhDT3ZYYXVyd0FBb0tITkFjRGJQd0NjYTQvZDZ3UUFBQnJhRkFDOC9RUEFHRnQzOE9vQVlQa0R3RmhiZHJHdkFBQ2dvVlVCd05zL0FNU3dkaWM3QVFDQWhoWUhBRy8vQUJETG10M3NCQUFBR2xvVUFMejlBMEJNUzNlMEV3QUFhR2gyQVBEMkR3Q3hMZG5WVGdBQW9LRlpBY0RiUHdEa01IZG5Pd0VBZ0lZRUFBQm82R1VBY1B3UEFMbk0yZDFmejdpUWJuNysrTy9sZitldjc5OU91QktBK016TU1TN1Ava052Ly9QTktlQkhGRFpMYmFtM0k2aGhsakl6ejNHNVhCN3VlU2NBRysweGlHLy9ERVVOVkdkbXh1RkhnQnZzL1JZVzdhME9ZRTltWml3UEE0RGovK2VPS2p3RkRWUmtabzd4YkpjN0FWamg2SUpUMEVBbFptWk1Bc0JDWnhXYWdnWXFNRFBqdWhzQUhQL2ZkM2FCS1dnZ016TXpoa2M3M1FuQVRLTUtTMEVER1ptWjhRa0FNNHd1cU5GL1BzQVNvMmZXNkQ4L2kwOEJ3UEYvVEFvYXlNQ3NpdW5lYm5jQzhFS2tZbzUwTFFBZlJacFJrYTRsS2dFZ0dVVU5SR1EyNVNNQUpLVFJnRWpNcEp6ZUJRRGYvNzhYdWFnalh4dlFSK1JaRlBuYVJ2aTQ0NTBBSkthNGdaSE1vTndFZ09RMElEQ0MyWk9mQUZDQVJnVE9aT2JVOERzQStQNC9OdzBKbk1Hc3llM3RybmNDVUlqR0JJNWt4dFFpQUJTalFZRWptQzMxQ0FBRmFWUmdUMlpLVFFKQVVSb1cySU5aVXRlWGFmSUR3RWYrK3Y1dDlDVnNvbkdCTGJMUGtPd3ovQ2kzbmU4RW9ManNEUXlNWVhiVUp3QTBvSkdCSmN5TUhnU0FGNm9jSVdsb1lJNHFzNkxLN0Q2U0FOQklsY1lHam1GRzlDSUF6RkFwU1dwdzRKNUtzNkhTekQ2U0FEQlRwWUtxMU9qQWRwVm1RcVZaZlRRQllJRktoVldwNFlIMUtzMkNTalA2REYvOEhRRExWQ3F3U28wUExGZHBCbFNheldlNFhxOVhKd0FyVkNxMFNnTUFtSzlTNzFlYXlXY1NBRmFxVkhDVkJnSHdXcVdlcnpTTHp5WUFiRkNwOENvTkJPQ3hTcjFlYVFhUElBQnNWS2tBS3cwRzRMTktQVjVwOW80aUFPeWdVaUZXR2hEQUg1VjZ1OUxNSFVrQTJFbWxncXcwS0lCYVBWMXAxbzRtQU95b1VtRldHaGpRV2FWZXJqUmpJeEFBZGxhcFFDc05EdWlvVWc5WG1xMVJDQUFIcUZTb2xRWUlkRktwZHl2TjFFZ0VnSU5VS3RoS2d3UTZxTlN6bFdacE5BTEFnU29WYnFXQkFwVlY2dFZLTXpRaUFlQmdsUXE0MG1DQmlpcjFhS1haR1pVQWNJSktoVnhwd0VBbGxYcXowc3lNVEFBNFNhV0NyalJvb0lKS1BWbHBWa1luQUp5b1VtRlhHamlRV2FWZXJEUWpNN2hjcjlmcjZJdm9Sc095VnZUYVVRL25pbDRQUzZpZDh3a0FnMmhjbnFsVUg5T2tSbzVRcVViVXh4Z0N3RUFhbUdtcVZRZExxSm4xS3RXTU9oaEhBQmhNSS9kVDZabnZTZjNNVTZsK1BQT3hCSUFBTkhSdGxaN3ZtZFRTWjVWcXlmTWRUd0FJUW1QWFV1bDVScUNtYXRXVTV4bURBQkNJQnMrdDB2T0xURzNsMXZINVJTVUFCS1BSYzZuMHZESlNZN2wwZUY2WkNBQUJhZmo0S2oyakN0UlpmRldmVVdZQ1FGQWFQNTVLejZReTlSWlBsV2RTalFBUW1BRVFRNlhuMEltYWl5SHpjNmhPQUFqT0lCaW4wcjN2VE4yTmsrM2VkeU1BSkdBZ25LZlN2ZVl6OVhlZTZQY2FBU0FOZytGWWxlNHZyNm5CWTBXOHYzd21BQ1JpUU95djBqMWxPWFc0dnlqM2xOY0VnR1FNaW4xVXVvOXNweGIzWWZubjhtWDBCYkJNcFFZYk5mZ3FEVnoyb1JhM3F6U2J1bkFDa0pUQnNWeWxlOFp4MU9OeWxuOU9Ba0JpQnNnOGxlNFQ1MUdUODFqK2VRa0F5UmtrajFXNk40eWpMaCt6L0hQekc0RGtLalhnbm9PeDBwQmxMSFY1WDZYWjA1VVRnQ0lNbGw4cTNRZmlVWnUvV1A0MU9BRW9vbEpEcmgyVWxRWXNNYW5OV3JPbU95Y0F4WFFjTkpVK00zbDByRS9MdnhZbkFNVlVhdEE1ZzdQU2NDV1hidlZaYWJid2l3QlFVS1ZHZlRaQUt3MVhjdXBTbjVWbUNuLzRDcUN3cWdPbzB1ZWlqcW8xYXZuWDVRU2dzRXFOZXh1b2xRWXJ0VlNzMFVvemhNK2NBRFJRYVNBQjU3RDg2M01DMElCR0JwWXdNM29RQUpyUTBNQWNaa1VmQWtBakdodDR4b3pveFc4QUd2S2JBQ0x6MSsyT1lmbjNJd0EwWlZBeTJwa0xSNzAvWi9uM0pBQTBaaWh5cGtoTFJ1My9FZW01Y0M0Qm9EbURrQ05sV0M2ZGV5REQ4K0U0QWdDdEJ5REh5TGhZdXZWQnhtZkV2Z1FBcG1ucU4vellYNldGVXIwZktqMHIxaE1BK0szNjBPTVlsWmRKeFo2by9MeFlSZ0RnbllvRGoyTjBXaVJWK3FMVE0rTTFBWUJQcWd3N2p0RjVpV1R1amM3UGpmdjhUWUI4WWxEd1NQZmF5UHI1czE0M3gzSUN3RU9aMzNiWWx3WHlXWmIrOE94NHhBa0FEeGtjVEpNNmVDVERmY2x3all3akFQQ1VBZEtiNS85YzVQc1QrZHFJd1ZjQXpKTGx1Sk45V0I3TFJlb1J6NDg1bkFBd2k0SFNoMmU5VHBUN0Z1VTZpRThBWURhRHBUN1BlSnZSOTIvMG4wOHVBZ0NMR0RCMWViYjdHSFVmUFQrV0VnQll6S0NweHpQZDE5bjMwL05qRFFHQVZReWNPanpMWTV4MVh6MC8xaElBV00zZ3ljOHpQTmJSOTlmell3c0JnRTBNb0x3OHUzTWNkWjg5UDdZU0FOak1JTXJITXp2WDN2ZmI4Mk1QQWdDYlJmb0xVSGpOOGhoanovdXU1OWlEQU1BbUJsRXVsdjlZUWdDUkNBQUEwSkFBd0dyZVFITHg5aCtEVXdDaUVBQll4ZURKeGZLUFJRZ2dBZ0dBeFF5Y1hDei9tSVFBUmhNQUFLQWhBWUJGdkduazR1MC9OcWNBakNRQU1Kc0JrNHZsbjRNUXdDZ0NBQUEwSkFBd2l6ZUxYTHo5NStJVWdCRUVBRjR5VUNBWFBjc2NBZ0FVNCswL0o4K05zd2tBUE9WTkFuTFN1N3dpQUVBaDNpSno4L3c0a3dEQVE5NGdJRGM5ekRNQ0FBQTBKQUJ3bHplSGZCd2YxN0QzYzlUTFBDSUE4SW1CQWJYb2FlNFJBS0FBYi8rMWVKNmNRUURnSFc4S1VKUGU1cU92b3k4QVlDK1h2LytkL2QrOS92Ty9BNjhFNHJ0Y3I5ZnI2SXNnQm04SU9YVStMbDZ5OEYrSkdBaU82TW5POWNKN1RnQ0FWUFpjK28vK3VSSERBT3pOYndDWXBzbmJQL0ZkL3Y3M3NPVS84czg2bTE3bnhna0FFTnJJUlh6N3M1MElVSkVUQUVpczh2ZTVrZDdDUjExTDVlZkxlQUlBamdRSko4cmkveWpxZFMybDU1a21BUUFJSnZxU2pYNTlNSmNBMEp3M0FTTEpzbHl6WE9jemVoOEJBQWdoMjFMTmRyM3drUURRbURjQW9zaTZUTE5lOTQwWjBKc0FBRWxWK1lWNDlpVjY5UFZYZWM3RUl3QUF3MlJmL2pkVlBnZTlDQUJOT2ZwanRHcExNK3ZuTVF2NkVnQ0EwMlZkbHE5VS9WelVKQUEwSlBFRGI1a0pQUWtBd0ttcXZ5VlgvM3pVSVFBQVFFTUNRRE9PK2hpcHk5dHh4czlwTnZRakFBQkFRd0lBY0lxTWI4VmJkUHU4NUNNQU5PS0lEM2pHak9oRkFBQU8xL1Z0dU92bkpnY0JBQUFhRWdDYWNMUUh6R0ZXOUNFQUFFQkRBZ0FrbGVWTnJmdjM0RnMvZjViblRENENBQUEwSkFBMDRBMENXTUxNNkVFQUFJQ0dCQUFBYUVnQUFJQ0dCSURpZkpkWG0rZGIyOGpucTdicUV3QUFvQ0VCQUFBYUVnQUFvQ0VCQUpMelhXMU5uaXRIRXdBS00wQ0FMY3lRMmdRQTRGRFhmLzQzK2hLRzZ2NzVpVXNBZ0FLOHFkWGllWElHQVFBQUdoSUFvQWh2alRWNGpweEZBQUFPMS9WNzhLNmZteHdFZ0tLOFJRQjdNRXZxRWdDZ2tNakR1dHZiOEpyUEcvbjVVYy9YcmY4QUJRdFFtemtmMDEvZnYyMzYzMSt1MSt0MTZmOUlNVUJzV3dmRGtTNS8venY2RWc3bjdaK3pyZW41UlNjQUNoUUE0cm50NXlWQllQWnZBQ3gveUNOeXYxYi9MWUMzZjBaYVVrc3ZUd0FVSmdEa01mYzA0T2tKZ09VUGVVWHUzNnFuQU43K2llUlZiVDBNQUlvUzhvdmN4OVZDZ09WUFJNOXF6TjhEQUF4VEpRUlUrUnowY2pjQVNLVlFSL1IrenI0ODExNS85T2RDSFk5cTdWTUFVSlJRVC9TK3pob0NMSCt5dUZkenZnS0FKcUl2bld3aHdQSW51M2NCUUdFQ0kyVUpBVm11RTk3NnVPT2RBRUFqR1VKKzlPVzY1Zm95M0gvNkVBQ2dtUXhMS0dvSXNQeXA1UGYvR1pEaWhGNGkveDhHdlJYaC96eG9heUF4WDRuazF2dE9BS0NwTEV2cCtzLy9ocDBJN1BGblo3blA5Q01BUUdPWmx0T1pRV0N2UHl2VC9hV2ZSZjkzd0VBOVAzLzhsK2JyZ0dsNmZ4eS81OWNEZTRjTHk1L29CQUFnWFFpNCtiaTBsd1NDSTA4VExIOHlFQUNBYVpyeWhvQzNJdnpiQTVZL1dmZ05BUENiNWJXTiswY21BZ0R3amlXMmp2dEdOci8vSG9CcFVzREFlOW0vRWppRHVVa21iM3ZhQ1FEd2tPWDJuUHREWmdJQThKUWxkNS83UW5idnZnS1lKa1VOUE9ZckFUT1N2RDcycnhNQVlMYnV5Ni83NTZlV1R5Y0EwNlRJZ2RjNm5RYVlpV1IzcjEvdkJvQnBVdkRBUEpXRGdEbElCWTk2MU44RUNHeHlXNUtWZ29ERlR3Y1BUd0NtU1JNQTYyUU1BK1lkRlQzcnhhY0JZSm8wQmJCZWhpQmd4bEhWcS81N0dRQnVOQW13UmFRd1lKNVIyZHhlbXgwQXBrblRBUHM1TXhDWVhYU3hwSzhXQllBYnpRUWNaVXN3TUp2b2FrM2ZyQW9BYjJrNEFEamYxbE8welFHQW1BUXpZQytSZnIvQmZ2eFZ3QURRa0FCUWxNUU83TUVzcVVzQUFJQ0dCQUFBYUVnQUFJQ0dCQUFBYUVnQUFJQ0dCSURDL0hvWDJNSU1xVTBBQUlDR0JBQUFhRWdBQUlDR0JBQUFhRWdBS002UGVJQTF6STc2QkFBQWFFZ0FBSUNHQkFBQWFFZ0FhTUIzZWNBU1prWVBBZ0FBTkNRQUFFQkRBZ0FBTkNRQU5PRTdQV0FPczZJUEFRQUFHaElBQUtBaEFhQVJSM3ZBTTJaRUx3SUFBRFFrQUFCQVF3SkFNNDc0Z0h2TWhuNEVBQUJvU0FBQWdJWUVnSVljOVFGdm1RazlDUUFBMEpBQTBKVEVEMHlUV2RDWkFBQUFEUWtBQU5DUUFOQ1lvei9velF6b1RRQUFnSVlFZ09hOEFVQlBlaDhCQUFBYUVnRHdKZ0RONkhtbVNRQUFnSllFQUFCb1NBQmdtaVpIZ3RDRlh1ZEdBQUNBaGdRQWZ2Tm1BTFhwY2Q0U0FBQ2dJUUdBZDd3aFFFMTZtNDhFQUFCb1NBRGdFMjhLVUl1ZTVoNEJnTHNNREtoQkwvT0lBQUFBRFFrQVBPVE5BWExUd3p3akFBQkFRd0lBVDNtRGdKejBMcThJQUFEUWtBREFTOTRrSUJjOXl4d0NBTE1ZS0pDRFhtVXVBUUFBR2hJQW1NMmJCY1NtUjFsQ0FHQVJBd1ppMHBzc0pRQUFRRU1DQUl0NTA0Qlk5Q1JyQ0FDc1l1QkFESHFSdFFRQVZqTjRZQ3c5eUJZQ0FBQTBKQUN3aVRjUUdFUHZzWlVBd0dZR0VaeEx6N0VIQVlETmZ2NzRiL1FsUUN0NmpqMElBR3hpRU1FWWVvK3RCQUJXTTRCZ0xEM0lGZ0lBcXhnOEVJTmVaQzBCZ01VTUhJaEZUN0tHQU1BaUJnM0VwRGRaU2dCZ05nTUdZdE9qTENFQU1JdkJBam5vVmVZU0FIakpRSUZjOUN4ekNBQThaWkJBVG5xWFZ3UUFIakpBSURjOXpETUNBSGNaSEZDRFh1WVJBWUJQREF5b1JVOXpqd0RBT3dZRjFLUzMrVWdBNERjREFtclQ0N3dsQURCTms4RUFYZWgxYmdRQURBUm9Sczh6VFFKQWV3WUI5S1QzRVFBYU13Q2dOek9nTndHZ0tZMFBUSk5aMEprQTBKQ0dCOTR5RTNvU0FKclI2TUE5WmtNL0FrQWpHaHg0eG96b1JRQm9RbU1EYzVnVmZRZ0FEV2hvWUFrem93Y0JvTGhLamZ6WDkyK2pMd0dlcWxTamxXWUg5d2tBaFZWcTROdGdyVFJncWFWaWpWYWFJWHgydVY2djE5RVh3ZjRxTmU2amdWcnBNNUpYaC9xc0ZHcjR3d2xBUVYwR2o2SEVhRjNxczlKTTRROEJvSmhLalRwbmdGWWFzdVRTclQ0cnpSWis4UlZBSVpVYWRNM2dyUFQ1aWF0N2JWWUtOZDA1QVNqQ2dER1lPSjdhckRWcnVuTUNVRUNsaHR4clVGYTZKNHluTGorckZHcTZjZ0tRbklGeS9EK0wzdFRsZlpWbVQxZE9BQktyMUlCSERzWks5NG56cU1sNUtvV2FiZ1NBcEF5UTVTcmRNNDZqSHBjVEFuSVNBQkl5T0xhcGRQL1lqMXJjUmdqSXgyOEFrakV3OHY2NXhLVVd0NnMwbTdwd0FwQklwUWFMTXZncTNWT1dVNGY3aTNKUGVVMEFTTUtBT0ZhbCs4dHJhdkJZRWU4dm53a0FDUmdNNTZsMHIvbE0vWjBuK3IxR0FBalBRQmluMHIzdlROMk5rKzNlZHlNQUJHWVF4RkRwT1hTaTVtTEkvQnlxRXdDQ01nRGlxZlJNS2xOdjhWUjVKdFVJQUFGcC9QZ3FQYU1LMUZsOFZaOVJaZ0pBTUJvK2wwclBLeU0xbGt1SDU1V0pBQkNJUnMrdDB2T0xURzNsMXZINVJTVUFCS0hCYTZuMFBDTlFVN1ZxeXZPTVFRQUlRR1BYVnVuNW5ra3RmVmFwbGp6ZjhRU0F3VFIwUDVXZStaN1V6enlWNnNjekgwc0FHRWdqTTAyMTZtQUpOYk5lcFpwUkIrTUlBSU5vWUo2cFZCL1RwRWFPVUtsRzFNY1lBc0FBR3BlMW90ZU9lamhYOUhwWVF1MmNUd0E0bVlabEQ5SHFTQzJNRTYwV3RsQkg1L295K2dJNjBhakEzaXIxWXFVWm1ZRUFjSkpLaFYxcDRFQUZsWHF5MHF5TVRnQTRRYVdDcmpSb29KSkt2VmxwWmtZbUFCeXNVaUZYR2pCUVVhVWVyVFE3b3hJQURsU3BnQ3NORnFpc1VxOVdtcUVSQ1FBSHFWUzRsUVlLZEZDcFp5dk4wbWdFZ0FOVUt0aEtnd1E2cWRTN2xXWnFKQUxBemlvVmFxVUJBaDFWNnVGS3N6VUtBV0JIbFFxMDB1Q0F6aXIxY3FVWkc0RUFzSk5LaFZscFlBQzFlcnJTckIxTkFOaEJwWUtzTkNpQVB5cjFkcVdaTzVJQXNGR2xRcXcwSUlEUEt2VjRwZGs3aWdDd1FhVUNyRFFZZ01jcTlYcWxHVHlDQUxCU3BjS3JOQkNBMXlyMWZLVlpmRFlCWUlWS0JWZHBFQUR6VmVyOVNqUDVURjh1bDh0bDlFVmtVcW5RS2cwQVlMbEtNNkRTYkQ3RDVYSzVPQUZZb0ZLQlZXcDhZTDFLczZEU2pENkRBREJUcGNLcTFQREFkcFZtUXFWWmZUUUJZSVpLQlZXcDBZSDlWSm9ObFdiMmtRU0FSaW8xT0xBL002SVhBZUNGS2tsU1l3TnpWSmtWVldiM2tRU0FCcW8wTkhBT002TUhBYUE0alF5c1lYYlU5MldhZnYzN2dLTXZKS0xzUjBnYUdOZ2krd3pKUHNPUGN0djVUZ0NLeXQ2NFFBeG1TVjBDUUVFYUZ0aVRtVktUQUZDTVJnV09ZTGJVSXdBVW9rR0JJNWt4dGZ3T0FINEltSnZHQk01ZzF1VDJkdGM3QVNoQVF3Sm5Nbk5xRUFDUzA0akFDR1pQZmdKQVlob1FHTWtNeXUxZEFQQTdnUGNpRjNma2F3UDZpRHlMSWwvYkNCOTN2Qk9BaEJRMUVJbVpsSk1Ba0l4R0F5SXltL0lSQUY2SVZOU1JyZ1hnbzBnekt0SzFSUFVwQVBnZFFFeUtHY2pBcklycDNtNTNBakRENklJZS9lY0RMREY2Wm8zKzg3TVFBR1lhVlZBS0djakl6SXp2YmdEd05jQjlaeGVXUWdZeU16TmplTFRUblFBc2RGYUJLV1NnQWpNekxnRmdoYU1MVFNFRGxaaVpNVDBNQUw0R2VPNm9nbFBJUUVWbTVoalBkcmtUZ0EzMkxqeUZERlJtWnNieWRmUUZaSGNyd0o4Ly90djh6d0NvenN5TTQrVXgvL1Y2dlo1eElaWE1LV3dGekJaYmh1Y1IxRE5ibUpuSGVQVlZ2aE9BQXloVWdQbk16REZlL2diQWp3RUJJSmM1dTl1UEFBR2dJUUVBQUJxYUZRQjhEUUFBT2N6ZDJVNEFBS0NoMlFIQUtRQUF4TFprVnpzQkFJQ0dGZ1VBcHdBQUVOUFNIZTBFQUFBYVdod0FuQUlBUUN4cmRyTVRBQUJvYUZVQWNBb0FBREdzM2NsT0FBQ2dvZFVCd0NrQUFJeTFaUmR2T2dFUUFnQmdqSzA3MkZjQUFORFE1Z0RnRkFBQXpyWEg3blVDQUFBTjdSSUFuQUlBd0RuMjJybTduUUFJQVFCd3JEMTNyYThBQUtDaFhRT0FVd0FBT01iZU8zYjNFd0FoQUFEMmRjUnVQZVFyQUNFQUFQWngxRTcxR3dBQWFPaXdBT0FVQUFDMk9YS1hIbm9DSUFRQXdEcEg3OUREdndJUUFnQmdtVE4ycDk4QUFFQkRwd1FBcHdBQU1NOVpPL08wRXdBaEFBQ2VPM05YbnZvVmdCQUFBUGVkdlNOUC93MkFFQUFBNzQzWWpVTitCQ2dFQU1Bdm8zYmlzSDhMUUFnQW9MdVJ1M0RvdndZb0JBRFExZWdkT1B6dkFSaDlBd0RnYkJGMjMvQUFNRTB4YmdRQW5DSEt6Z3NSQUtZcHpnMEJnS05FMm5WaEFzQTB4Ym94QUxDbmFEc3VWQUNZcG5nM0NBQzJpcmpid2dXQWFZcDVvd0JnamFnN0xXUUFtS2E0Tnd3QTVvcTh5OElHZ0dtS2ZlTUE0Sm5vT3l4MEFKaW0rRGNRQUQ3S3NMdStqcjZBT1c0MzhucTlYa2RmQ3dBOGttSHgzNFEvQVhncjA0MEZvSmRzT3lwVkFKaW1mRGNZZ1BveTdxWVVYd0Y4NUNzQkFDTEl1UGh2MHAwQXZKWDV4Z09RVy9ZZGxEb0FURlArQndCQVBoVjJUOHF2QUQ3eWxRQUFaNml3K0cvU253QzhWZW5CQUJCTHRSMVQ0Z1RnTGFjQkFPeXAydUsvS2ZtaDNoSUVxT3Juai85R1g4STBUZFAwMS9kdm95OEJEbEYxOGQrVStncmdudW9QRUlEOWRkZ2Q1YjRDdU1mWEFnRE0wV0h4MzdUNW9HOEpBbFF4K21zQXgvOVUwV254MzdRNEFmaklpUUFBMDlSejhkKzAvZUJ2Q1FKa051b1V3TnMvbVhWZS9EZnRiOEJiZ2dCWm5SMENMSCt5c3ZqL2FQa1Z3Q052QzBNWUFLakIwci9QVFhsQkVDQ0xzMDRCdlAyVGhjWC9uSnV6Z0RCQWRFZUhBTXVmNkN6OStkeW9sWVFCSXRzN0NGajhSR2JwcitPbTdVQVlJS0s5UW9EbFQwU1cvblp1NEFFRUFpSlpHd1FzZmlLeDhQZm5ocDVBSUNDS1YySEEwaWNLQy85NGJ2QWdRZ0hBTDViOUdHNTZVQUlDVUlVRkg5UC9BUUhNYitlT3BsNkFBQUFBQUVsRlRrU3VRbUNDIiwgInNpemVzIjogIjUxMng1MTIiLCAidHlwZSI6ICJpbWFnZS9wbmciLCAicHVycG9zZSI6ICJhbnkgbWFza2FibGUifV19">
@@ -516,6 +578,34 @@ self.addEventListener('fetch', e => {
       </div>
     </div>
 
+    <!-- Co-MYAKU POPULATION -->
+    <div class="settings-section">
+      <span class="settings-label">Co-MYAKU</span>
+      <div class="tempo-toggle">
+        <button class="tempo-btn pop-btn active" data-pop="few">
+          <span class="pop-dots">
+            <span class="pop-dot-item" style="background:#0068B7; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+          </span>
+        </button>
+        <button class="tempo-btn pop-btn" data-pop="natural">
+          <span class="pop-dots">
+            <span class="pop-dot-item" style="background:#0068B7; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+            <span class="pop-dot-item" style="background:#00A59E; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+            <span class="pop-dot-item" style="background:#A78EC3; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+          </span>
+        </button>
+        <button class="tempo-btn pop-btn" data-pop="lively">
+          <span class="pop-dots">
+            <span class="pop-dot-item" style="background:#0068B7; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+            <span class="pop-dot-item" style="background:#31ACE3; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+            <span class="pop-dot-item" style="background:#00A59E; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+            <span class="pop-dot-item" style="background:#C9E0B8; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+            <span class="pop-dot-item" style="background:#A78EC3; box-shadow:0 0 0 1.5px rgba(0,0,0,0.15)"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+
     <!-- BACKGROUND PHOTO -->
     <div class="settings-section">
       <span class="settings-label">BACKGROUND PHOTO</span>
@@ -530,8 +620,8 @@ self.addEventListener('fetch', e => {
     <div class="credit-block">
       <span class="credit-line">Presented by: ARPeggioRev2</span>
       <span class="credit-line">Program assisted by: Gemini &amp; Claude</span>
-      <span class="credit-line">こみゃくのうみ Version: 1.0.0</span>
-      <span class="credit-line disclaimer">本作品は <a href="https://www.expo2025.or.jp/news/news-20260330-01/" target="_blank" style="color:var(--blue-primary);text-decoration:underline;text-underline-offset:2px;">二次創作ガイドライン</a>に基づき個人制作されたファンアートです。<br>運営団体および公式とは一切関係がありません。</span>
+      <span class="credit-line">こみゃくのうみ Ver. 1.0.0</span>
+      <span class="credit-line disclaimer">本作品は<a href="https://www.expo2025.or.jp/news/news-20260330-01/" target="_blank" style="color:var(--blue-primary);text-decoration:underline;text-underline-offset:2px;">二次創作ガイドライン</a>に基づき個人制作されたファンアートです。運営団体および公式とは一切関係がありません。</span>
     </div>
   </div>
 </div>
@@ -568,16 +658,13 @@ const CONFIG = {
   URCHIN_PROBABILITY: 0.04,
   URCHIN_DIVIDE_PROBABILITY: 0.12,
   PHYSICS: {
-    SPRING_K: 0.005,
-    DAMPING: 0.992,           // 高めのダンピングで振動を素早く吸収
-    PERSONAL_SPACE_MIN: 0.1,
-    PERSONAL_SPACE_MAX: 0.4,
+    DAMPING: 0.985,           // ダンピング（壁・ヌシ挟まれ時の振動を抑制）
     COLLISION_STRENGTH: 0.008, // 衝突応答を穏やかに
     AVOIDANCE_RANGE: 2.2,
     AVOIDANCE_FORCE: 0.006,   // 回避力を弱く（ゆっくり気づく）
     RANDOM_DRIFT: 0.018,       // ドリフト量を下げる（正弦波で補う）
-    DRIFT_FREQ_BASE: 0.07,    // クラゲ漂いの基本周波数（低周波）
-    DRIFT_AMP: 0.28           // 漂いの振幅
+    DRIFT_FREQ_BASE: 0.06,    // クラゲ漂いの基本周波数
+    DRIFT_AMP: 0.22           // 漂いの振幅
   },
   JOIN_MIN_LIFE_MS: 8000,     // Join成立に必要な最低残りライフ（8秒固定）
   AUDIO: {
@@ -626,7 +713,6 @@ const PALETTE = {
 let isPlaying = true;
 let bgImage = null;
 
-function nushiLog(msg) {}
 
 /* ================================================================
    AUDIO ENGINE
@@ -681,7 +767,8 @@ class AudioEngine {
     this.reverbGain = this.ctx.createGain();
     this.reverbGain.gain.value = CONFIG.AUDIO.REVERB_MIX;
     this.convolver = this.ctx.createConvolver();
-    this.updateReverbBuffer(CONFIG.AUDIO.REVERB_DECAY);
+    this.currentReverbType = null;
+    this.updateReverbBuffer('aquarium');
 
     this.reverbGain.connect(this.convolver);
     this.convolver.connect(this.limiter);
@@ -732,17 +819,92 @@ class AudioEngine {
     this.bassSaturation.curve = curve;
   }
 
-  updateReverbBuffer(duration) {
-    const sampleRate = this.ctx.sampleRate;
-    const length = sampleRate * duration;
-    const impulse = this.ctx.createBuffer(2, length, sampleRate);
-    for (let i = 0; i < 2; i++) {
-      const channelData = impulse.getChannelData(i);
+  _normalizeIR(buffer) {
+    // RMSベースのノーマライズ（参照実装準拠）
+    let sumSq = 0;
+    for (let c = 0; c < buffer.numberOfChannels; c++) {
+      const d = buffer.getChannelData(c);
+      for (let i = 0; i < d.length; i++) sumSq += d[i] * d[i];
+    }
+    const rms = Math.sqrt(sumSq / (buffer.length * buffer.numberOfChannels));
+    const norm = 0.08 / (rms + 1e-9);
+    for (let c = 0; c < buffer.numberOfChannels; c++) {
+      const d = buffer.getChannelData(c);
+      for (let i = 0; i < d.length; i++) d[i] *= norm;
+    }
+  }
+
+  buildStandardIR(duration) {
+    const sr = this.ctx.sampleRate;
+    const length = Math.floor(sr * duration);
+    const buf = this.ctx.createBuffer(2, length, sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
       for (let j = 0; j < length; j++) {
-        channelData[j] = (Math.random() * 2 - 1) * Math.pow(1 - j / length, 2.0);
+        d[j] = (Math.random() * 2 - 1) * Math.pow(1 - j / length, 2.0);
       }
     }
-    this.convolver.buffer = impulse;
+    this._normalizeIR(buf);
+    return buf;
+  }
+
+  buildAquariumIR() {
+    const sr = this.ctx.sampleRate;
+    const duration = 5.0;
+    const length = Math.floor(sr * duration);
+    const buf = this.ctx.createBuffer(2, length, sr);
+    const pre = Math.floor(sr * 0.002); // 2ms プリディレイ
+
+    const reflectionTimes = [
+      { ms: 6,  amp: 0.85 },
+      { ms: 15, amp: 0.65 },
+      { ms: 23, amp: 0.50 },
+      { ms: 30, amp: 0.35 },
+      { ms: 46, amp: 0.25 },
+    ];
+
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      const stereoOffset = ch === 1 ? 3 : 0;
+
+      reflectionTimes.forEach(({ ms, amp }) => {
+        const idx = Math.floor((ms + stereoOffset) * sr / 1000) + pre;
+        if (idx < length) {
+          d[idx] += amp;
+          for (let k = 1; k <= 3; k++) {
+            if (idx + k < length) d[idx + k] += amp * 0.1 * (1 - k / 4);
+            if (idx - k >= 0)     d[idx - k] += amp * 0.05 * (1 - k / 4);
+          }
+        }
+      });
+
+      const tailStart = pre + Math.floor(0.05 * sr);
+      for (let j = tailStart; j < length; j++) {
+        const t = (j - tailStart) / sr;
+        d[j] += (Math.random() * 2 - 1) * Math.exp(-3.5 * t) * 0.4;
+      }
+    }
+
+    this._normalizeIR(buf);
+    return buf;
+  }
+
+  updateReverbBuffer(type = 'standard') {
+    try {
+      const buf = (type === 'aquarium')
+        ? this.buildAquariumIR()
+        : this.buildStandardIR(CONFIG.AUDIO.REVERB_DECAY);
+      this.convolver.buffer = buf;
+      this.currentReverbType = type;
+    } catch(e) {
+      console.warn('updateReverbBuffer failed:', e.message);
+    }
+  }
+
+  setReverbType(type) {
+    if (!this.initialized) return;
+    if (type === this.currentReverbType) return;
+    this.updateReverbBuffer(type);
   }
 
   createBpmSyncedPhaser(bpm) {
@@ -1025,30 +1187,27 @@ class FrequencyPool {
 let particles = [];
 
 class Bubble {
-  constructor(x, y, color, eyeR) {
+  constructor(x, y, color, eyeR, isNushi = false) {
     this.x = x;
     this.y = y;
     this.color = color;
-    // 瞳サイズ程度（eyeR * 0.3 〜 1.0 のランダム）
     this.r = eyeR * (0.3 + Math.random() * 0.7);
     this.alpha = 0.55 + Math.random() * 0.3;
-    // じわっと上昇: 速度は小さく、ゆっくり
+    this.isNushi = isNushi;
+    // 通常・ヌシ共通: じわっと上昇
     this.vx = (Math.random() - 0.5) * 0.4;
-    this.vy = -(0.25 + Math.random() * 0.35); // 上方向
+    this.vy = -(0.25 + Math.random() * 0.35);
     this.life = 0;
-    this.maxLife = 80 + Math.random() * 60; // フレーム数
+    this.maxLife = 80 + Math.random() * 60;
   }
 
   update() {
     this.life++;
     this.x += this.vx;
     this.y += this.vy;
-    // 上昇しながら横にも微妙に揺れる
     this.vx += Math.sin(this.life * 0.18) * 0.018;
-    // フェードアウト: 後半から透明に
     const progress = this.life / this.maxLife;
     this.alpha = (1 - progress) * (0.55 + Math.random() * 0.05);
-    // 少し膨らんで消える
     this.r += 0.018;
   }
 
@@ -1066,13 +1225,16 @@ class Bubble {
   get dead() { return this.life >= this.maxLife; }
 }
 
-function emitBubbles(x, y, color, eyeR, count = 1) {
+function emitBubbles(x, y, color, eyeR, count = 1, isNushi = false) {
+  // ヌシは体全体から広い範囲で発生
+  const spread = isNushi ? eyeR * 6 : eyeR * 2;
   for (let i = 0; i < count; i++) {
     particles.push(new Bubble(
-      x + (Math.random() - 0.5) * eyeR * 2,
-      y + (Math.random() - 0.5) * eyeR * 2,
+      x + (Math.random() - 0.5) * spread,
+      y + (Math.random() - 0.5) * spread,
       color,
-      eyeR
+      eyeR,
+      isNushi
     ));
   }
 }
@@ -1168,13 +1330,11 @@ class Nushi {
       this.scale = Math.min(1, elapsed / 2500); // ゆっくり出現
       if (this.scale >= 1) {
         this.state = 'live';
-        nushiLog(`[NUSHI] born→live at ${(now/1000).toFixed(1)}s, maxAge=${(this.maxAge/1000).toFixed(1)}s`);
       }
     } else if (this.state === 'live') {
       if (now - this.startTime > this.maxAge) {
         this.state = 'returning';
         this.returnStartTime = now;
-        nushiLog(`[NUSHI] live→returning at ${(now/1000).toFixed(1)}s (lived ${((now-this.startTime)/1000).toFixed(1)}s)`);
       }
     } else if (this.state === 'returning') {
       const progress = Math.min(1, (now - this.returnStartTime) / 4000);
@@ -1182,7 +1342,6 @@ class Nushi {
       this.scale = 1 - progress * 0.2;
       if (progress >= 1) {
         this.state = 'integrated';
-        nushiLog(`[NUSHI] returning→integrated at ${(now/1000).toFixed(1)}s (total lifetime ${((now-this.startTime)/1000).toFixed(1)}s)`);
       }
     }
 
@@ -1207,12 +1366,12 @@ class Nushi {
       this.volumeGain.gain.setTargetAtTime(targetGain, audio.ctx.currentTime, 0.8);
     }
 
-    // 和音シーケンス（8分音符パルス）- born中も発音、常に鳴らす
+    // 和音シーケンス（BPM120固定の8分音符パルス・テンポ設定に依存しない）
     if (audio.initialized && this.panner && isPlaying) {
       const nowCtx = audio.ctx.currentTime;
-      const beatInterval = audio.eighthNote;
-      const currentStepTotal = Math.floor(nowCtx / beatInterval);
-      const stepInMeasure = currentStepTotal % 8; // 8ステップ = 1小節
+      const NUSHI_BEAT_INTERVAL = 60 / 120 / 2; // BPM120の8分音符 = 0.25s固定
+      const currentStepTotal = Math.floor(nowCtx / NUSHI_BEAT_INTERVAL);
+      const stepInMeasure = currentStepTotal % 8;
 
       if (this.lastStep !== currentStepTotal) {
         this.lastStep = currentStepTotal;
@@ -1232,13 +1391,13 @@ class Nushi {
 
         // 毎8分音符でコードを鳴らす
         const chord = NUSHI_CHORDS[this.chordProgression[this.progressionPos]];
-        const schedTime = currentStepTotal * beatInterval;
+        const schedTime = currentStepTotal * NUSHI_BEAT_INTERVAL;
         this.panner.setPosition((this.x / W) * 2 - 1, 0, 1.0);
         this._playChord(chord, schedTime);
 
         // ★ 泡パーティクル（発音ごとに2〜3個、ヌシのサイズに応じた泡）
-        const eyeRForBubble = this.collisionR * 0.6;
-        emitBubbles(this.x, this.y, this.color, eyeRForBubble, 2 + Math.floor(Math.random() * 2));
+        const eyeRForBubble = this.collisionR * 0.15;
+        emitBubbles(this.x, this.y, this.color, eyeRForBubble, 2 + Math.floor(Math.random() * 2), true);
       }
     }
   }
@@ -1381,9 +1540,10 @@ class Nushi {
     targetCtx.fill();
 
     // ★ 瞳（白目中心を基点に getOutwardEyeMotion で動く）
-    // 瞳半径 r=18.7、白目内にクランプ
-    const pupilR = 18.7;
-    const maxPupilOffset = Math.min(eyeRX, eyeRY) - pupilR;
+    // こみゃくと同じ比率: 瞳半径 = 白目半径 * 0.45
+    const eyeRavg = (eyeRX + eyeRY) / 2;
+    const pupilR = eyeRavg * 0.45;
+    const maxPupilOffset = (eyeRavg - pupilR) * 0.95; // 白目の端近くまで寄る
     const m = getOutwardEyeMotion(t_sec, this.seed);
     const px = m.ex * maxPupilOffset;
     const py = m.ey * maxPupilOffset;
@@ -1400,9 +1560,11 @@ class Nushi {
 
   // ★ 衝突判定半径: 白目の短辺(29.2)をCanvasスケールに変換
   get collisionR() {
-    const svgMaxDim = Math.max(945, 787);
-    const scale = (this.r * 2 * this.scale * this.currentPulse) / svgMaxDim;
-    return 29.2 * scale;
+    // SVG中心(582.5, 448.5)から白目端(426.2±30.6, 208.3±29.2)までの距離
+    // √((582.5-426.2)²+(448.5-208.3)²) + 白目半径30.6 ≈ 318、マージン10%で約350
+    const svgCenterToEyeEdge = 350;
+    const canvasScale = (this.r * 2 * this.scale * this.currentPulse) / 945;
+    return svgCenterToEyeEdge * canvasScale;
   }
 }
 
@@ -1413,7 +1575,6 @@ function trySpawnNushi() {
   const roll = Math.random();
   const now = (performance.now()/1000).toFixed(1);
   if (roll < NUSHI_SPAWN_PROBABILITY) {
-    nushiLog(`[NUSHI] spawn check at ${now}s: roll=${roll.toFixed(4)} < ${NUSHI_SPAWN_PROBABILITY} → SPAWN`);
     nushi = new Nushi();
     // audio初期化済みだがコンストラクタ内でpannerが未作成の場合の保険
     if (audio.initialized && !nushi.panner) {
@@ -1464,11 +1625,9 @@ class Komyaku {
 
     // ★ Join時のホット/コールド音階プール（個体ごとに独立）
     this.freqPool = new FrequencyPool(E_MAJOR_SCALE);
-    this.lastPoolTickStep = -1;
 
     // ★ パープル（ベース）のJoin時シーケンス用
     this.bassPattern = null;
-    this.bassPatternStep = 0;
     this.generateBassPattern();
 
     if (!isInitial) {
@@ -1607,7 +1766,16 @@ class Komyaku {
 
       if (this.lastStep !== currentStepTotal) {
         this.lastStep = currentStepTotal;
-        if (stepInMeasure === 0 && Math.random() > 0.8) this.rhythmPattern = this.generateRhythm();
+
+        // ソロ時のみ rhythmPattern をランダム更新
+        if (!this.partner && stepInMeasure === 0 && Math.random() > 0.8) {
+          this.rhythmPattern = this.generateRhythm();
+        }
+
+        // ★ Join時: 毎小節(step0)でコールドプールをリセット → フレーズが常に新鮮
+        if (this.partner && stepInMeasure === 0) {
+          this.freqPool = new FrequencyPool(E_MAJOR_SCALE);
+        }
 
         if (stepInMeasure === 0 && !this.isRare && (this.partner || this.isJoinCandidate)) {
           this.targetResonance = 1.0;
@@ -1615,7 +1783,20 @@ class Komyaku {
           this.targetResonance = 0;
         }
 
-        const trigger = this.rhythmPattern[stepInMeasure];
+        // ★ Join時はシンコペーション入りの密なリズムを使用
+        // シンコペーションパターン: 1,2,3,5,6,7ステップに発音（0,4の強拍を外してオフビート感）
+        // さらに確率で追加発音して密度を上げる
+        const JOIN_RHYTHM = [0, 1, 1, 1, 0, 1, 1, 1]; // 基本密パターン
+        const SYNCO_OFFBEAT = [1, 0, 1, 1, 1, 0, 1, 1]; // シンコペーション
+        let trigger;
+        if (this.partner) {
+          // Join中: 2小節ごとにパターンを交互切替 + ランダム追加
+          const measureNum = Math.floor(currentStepTotal / 8);
+          const basePattern = (measureNum % 2 === 0) ? JOIN_RHYTHM : SYNCO_OFFBEAT;
+          trigger = basePattern[stepInMeasure] || (Math.random() > 0.65 ? 1 : 0);
+        } else {
+          trigger = this.rhythmPattern[stepInMeasure];
+        }
         const schedTime = currentStepTotal * beatInterval;
         this.panner.setPosition((this.x / W) * 2 - 1, 0, 1.0);
         const sizeFactor = 1.0 - ((this.r - CONFIG.R_MIN) / (CONFIG.R_MAX - CONFIG.R_MIN));
@@ -1710,7 +1891,7 @@ class Komyaku {
                   audio._playWithResonance(audio.playMarimba.bind(audio), freqBase, schedTime, visibility * densityBonus, this.panner, true, this.colorKey);
                   if (hasSameNeighbor && Math.random() > 0.6) {
                     const altIdx = this.freqPool.pickCold(true);
-                    audio.playMarimba(E_MAJOR_SCALE[altIdx] * 8.0, schedTime + 0.03, visibility * 0.25, this.panner);
+                    audio.playMarimba(E_MAJOR_SCALE[altIdx] * 4.0, schedTime + 0.03, visibility * 0.25, this.panner);
                   }
                   break;
               }
@@ -1729,7 +1910,6 @@ class Komyaku {
     // X/Yで周波数を微妙にずらして円を描かず不規則に
     this.vx += Math.sin(driftT * 1.0 + this.seed) * driftAmp * 0.012;
     this.vy += Math.sin(driftT * 0.73 + this.seed * 1.3) * driftAmp * 0.012;
-    // 微小ランダム（完全にパターン化しないための揺らぎ）
     this.vx += (Math.random() - 0.5) * CONFIG.PHYSICS.RANDOM_DRIFT;
     this.vy += (Math.random() - 0.5) * CONFIG.PHYSICS.RANDOM_DRIFT;
 
@@ -1740,13 +1920,13 @@ class Komyaku {
     // 壁: 強制反射ではなく緩やかに押し戻す
     const currentR = this.r * this.currentPulse * this.scale * (1 + this.joinEnergy * 0.35);
     const margin = currentR + 10;
-    if (this.x < margin) { this.vx += (margin - this.x) * 0.04; }
-    if (this.x > W - margin) { this.vx -= (this.x - (W - margin)) * 0.04; }
-    if (this.y < margin) { this.vy += (margin - this.y) * 0.04; }
-    if (this.y > H - margin) { this.vy -= (this.y - (H - margin)) * 0.04; }
-    // 壁の外に出た場合のフォールバック
-    this.x = Math.max(margin, Math.min(W - margin, this.x));
-    this.y = Math.max(margin, Math.min(H - margin, this.y));
+    // 壁: 画面端を基準に押し返す。体の半分まで入ったら力が最大
+    if (this.x < currentR) { this.vx += (currentR - this.x) * 0.012; }
+    if (this.x > W - currentR) { this.vx -= (this.x - (W - currentR)) * 0.012; }
+    if (this.y < currentR) { this.vy += (currentR - this.y) * 0.012; }
+    if (this.y > H - currentR) { this.vy -= (this.y - (H - currentR)) * 0.012; }
+    this.x = Math.max(-currentR * 0.3, Math.min(W + currentR * 0.3, this.x));
+    this.y = Math.max(-currentR * 0.3, Math.min(H + currentR * 0.3, this.y));
   }
 
   handleInteractions() {
@@ -1769,7 +1949,7 @@ class Komyaku {
         const bigEyeR = Math.max(myEyeR, pEyeR);
         const targetDist = myBodyR + pBodyR + bigEyeR * 2;
 
-        // 距離を直接固定（バネなし）: seedで制御側を決め位置を補正
+        // 距離固定スナップ
         if (this.seed > this.partner.seed && d > 0.001) {
           const mid = { x: (this.x + this.partner.x) * 0.5, y: (this.y + this.partner.y) * 0.5 };
           const nx = dx / d, ny = dy / d;
@@ -1778,11 +1958,43 @@ class Komyaku {
           this.y = mid.y - ny * half;
           this.partner.x = mid.x + nx * half;
           this.partner.y = mid.y + ny * half;
-          // 速度も中点基準に揃える（共通の漂い速度を維持）
           const mvx = (this.vx + this.partner.vx) * 0.5;
           const mvy = (this.vy + this.partner.vy) * 0.5;
           this.vx = mvx; this.vy = mvy;
           this.partner.vx = mvx; this.partner.vy = mvy;
+        }
+
+        if (this.seed > this.partner.seed && d > 0.001) {
+          const ang = Math.atan2(dy, dx);
+          const sinAng = Math.abs(Math.sin(ang)); // 縦成分の大きさ
+          const banThreshold = Math.sin(Math.PI / 3); // sin(60°) ≈ 0.866
+
+          if (sinAng > banThreshold) {
+            // 禁止帯域に入っている → 角度を水平方向に向けて回転
+            const depth = (sinAng - banThreshold) / (1 - banThreshold); // 0〜1
+            // 現在の角度から水平（0 or π）へゆっくり近づける
+            const targetAng = ang > 0
+              ? (ang > Math.PI / 2 ? Math.PI : 0)   // 下側 → 右か左の水平へ
+              : (ang < -Math.PI / 2 ? -Math.PI : 0); // 上側 → 右か左の水平へ
+            const rotateSpeed = 0.04 * depth; // 深いほど速く回転
+            const newAng = ang + (targetAng - ang) * rotateSpeed;
+
+            // 新しい角度で2体の位置を再配置
+            const mid = { x: (this.x + this.partner.x) * 0.5, y: (this.y + this.partner.y) * 0.5 };
+            const myS = this.scale * this.currentPulse * (1 + this.joinEnergy * 0.35);
+            const pS = this.partner.scale * this.partner.currentPulse * (1 + this.partner.joinEnergy * 0.35);
+            const myBodyR = this.r * myS;
+            const pBodyR = this.partner.r * pS;
+            const myEyeR2 = myBodyR * 0.42;
+            const pEyeR2 = pBodyR * 0.42;
+            const bigEyeR2 = Math.max(myEyeR2, pEyeR2);
+            const targetDist2 = myBodyR + pBodyR + bigEyeR2 * 2;
+            const half2 = targetDist2 * 0.5;
+            this.x = mid.x - Math.cos(newAng) * half2;
+            this.y = mid.y - Math.sin(newAng) * half2;
+            this.partner.x = mid.x + Math.cos(newAng) * half2;
+            this.partner.y = mid.y + Math.sin(newAng) * half2;
+          }
         }
       }
     }
@@ -1866,7 +2078,6 @@ class Komyaku {
     };
     const r1 = extendIfNeeded(this);
     const r2 = extendIfNeeded(target);
-    nushiLog(`[JOIN] established: ${this.colorKey}(rem=${r1.remaining}s${r1.extended?'+ext':''}) + ${target.colorKey}(rem=${r2.remaining}s${r2.extended?'+ext':''})`);
   }
 
   breakJoin() {
@@ -1875,7 +2086,6 @@ class Komyaku {
       const joinDuration = ((performance.now() - this.joinTime) / 1000).toFixed(1);
       const myRemaining = ((this.maxAge - (performance.now() - this.startTime)) / 1000).toFixed(1);
       const pRemaining = ((p.maxAge - (performance.now() - p.startTime)) / 1000).toFixed(1);
-      nushiLog(`[JOIN] break after ${joinDuration}s: ${this.colorKey}(rem=${myRemaining}s) ${p.colorKey}(rem=${pRemaining}s)`);
       this.partner = null;
       this.lastBreakTime = performance.now();
       if (p.partner === this) p.partner = null;
@@ -2135,16 +2345,10 @@ function spawn(x, y, r = null, colorKey = null, isFromDivision = false, isInitia
 /* ================================================================
    MAIN LOOP
 ================================================================ */
-function mainLoop(ts) {
-  if (!running) return;
+let bgIntervalId = null;
 
+function mainLogic(ts) {
   ft = ts;
-  ctx.clearRect(0, 0, W, H);
-
-  // 背景描画
-  if (bgImage) {
-    drawBackground();
-  }
 
   if (isPlaying) {
     const aliveEntities = entities.filter(e => e.state !== 'integrated');
@@ -2152,58 +2356,57 @@ function mainLoop(ts) {
       if (aliveEntities.length < maxPopAdjusted) {
         spawn(Math.random() * W, Math.random() * H);
       }
-      lastAuto = ts; // こみゃく満員時も更新し、毎フレーム判定を防ぐ
+      lastAuto = ts;
     }
-    // ★ ヌシのスポーン試行: 独立タイマーで一定間隔ごとに1回のみ判定
     if (ts - lastNushiCheck > BEAT_DURATION * 1000 * CONFIG.AUTO_SPAWN_BEATS) {
       trySpawnNushi();
       lastNushiCheck = ts;
     }
-    // ★ 描画順: パーティクル(背面) → ヌシ(中間) → こみゃく(前面)
-    particles.forEach(p => { p.update(); p.draw(ctx); });
+    particles.forEach(p => { p.update(); });
     particles = particles.filter(p => !p.dead);
-
-    if (nushi && nushi.isAlive) { nushi.update(); nushi.draw(ctx); }
-    else if (nushi && !nushi.isAlive) {
-      nushiLog(`[NUSHI] cleared (null) at ${(performance.now()/1000).toFixed(1)}s`);
-      nushi = null;
-    }
-
-    entities.forEach(e => { e.update(); e.draw(ctx); });
+    if (nushi && nushi.isAlive) { nushi.update(); }
+    else if (nushi && !nushi.isAlive) { nushi = null; }
+    entities.forEach(e => { e.update(); });
     entities = entities.filter(e => e.state !== 'integrated');
   } else {
-    // 一時停止中: 位置固定・描画のみ行う
+    // 一時停止中: ライフのみ進行
+    const now = performance.now();
     entities.forEach(e => {
-      // ライフは消耗（stateのみ進行させる、物理は止める）
-      const now = performance.now();
       if (e.state === 'born') {
         const elapsed = now - e.startTime;
         e.scale = Math.min(1, elapsed / 1500);
         if (e.scale >= 1) e.state = 'live';
       } else if (e.state === 'live') {
-        const lifeElapsed = now - e.startTime;
-        if (lifeElapsed > e.maxAge) {
+        if (now - e.startTime > e.maxAge) {
           e.state = 'returning';
           e.returnStartTime = now;
         }
       } else if (e.state === 'returning') {
-        const returnElapsed = now - e.returnStartTime;
-        const progress = Math.min(1, returnElapsed / 3000);
+        const progress = Math.min(1, (now - e.returnStartTime) / 3000);
         e.alpha = 1 - progress;
         e.scale = 1 - progress * 0.3;
         if (progress >= 1) { e.state = 'integrated'; e.breakJoin(); }
       }
-      e.draw(ctx);
     });
     entities = entities.filter(e => e.state !== 'integrated');
-
-    // 一時停止中もパーティクルはフェード継続
-    particles.forEach(p => { p.update(); p.draw(ctx); });
+    particles.forEach(p => { p.update(); });
     particles = particles.filter(p => !p.dead);
-    if (nushi && nushi.isAlive) { nushi.draw(ctx); }
   }
-
   document.getElementById('pop-count').textContent = entities.length;
+}
+
+function mainDraw() {
+  ctx.clearRect(0, 0, W, H);
+  if (bgImage) drawBackground();
+  particles.forEach(p => { p.draw(ctx); });
+  if (nushi && nushi.isAlive) { nushi.draw(ctx); }
+  entities.forEach(e => { e.draw(ctx); });
+}
+
+function mainLoop(ts) {
+  if (!running) return;
+  mainLogic(ts);
+  mainDraw();
   requestAnimationFrame(mainLoop);
 }
 
@@ -2216,6 +2419,13 @@ function initOpening() {
   if (!oCv) return;
   resizeOpeningCanvas();
 
+  // ランダムにカラーと形状を選択（ページ読み込み時に1回決定）
+  const oKeys = ['BLUE_P', 'BLUE_L', 'TEAL', 'GREEN', 'PURPLE'];
+  const oColorKey = oKeys[Math.floor(Math.random() * oKeys.length)];
+  const oColor = PALETTE[oColorKey];
+  const oIsUrchin = Math.random() < 0.5; // 50%でウニ、50%で通常円
+  const oSeed = Math.random() * Math.PI * 2;
+
   function oLoop(ts) {
     if (running) return;
     const size = resizeOpeningCanvas();
@@ -2227,26 +2437,32 @@ function initOpening() {
     const breath = 1 + Math.sin(t * bpmFreq * Math.PI * 2) * 0.012;
     const bodyR = (size * 0.22) * breath;
 
-    const angles = [0, Math.PI/4, Math.PI/2, 3*Math.PI/4, Math.PI, 5*Math.PI/4, 3*Math.PI/2, 7*Math.PI/4];
-    oCtx.strokeStyle = PALETTE.PURPLE;
-    oCtx.lineWidth = Math.max(2.5, size * 0.022);
-    oCtx.lineCap = 'round';
-    angles.forEach(ang => {
-      const spikeLen = bodyR + (size * 0.11) + Math.sin(t * 4.0 + ang * 2) * (size * 0.014);
-      oCtx.beginPath();
-      oCtx.moveTo(cx, cy);
-      oCtx.lineTo(cx + Math.cos(ang) * spikeLen, cy + Math.sin(ang) * spikeLen);
-      oCtx.stroke();
-    });
+    // ウニ形状
+    if (oIsUrchin) {
+      const angles = [0, Math.PI/4, Math.PI/2, 3*Math.PI/4, Math.PI, 5*Math.PI/4, 3*Math.PI/2, 7*Math.PI/4];
+      oCtx.strokeStyle = oColor;
+      oCtx.lineWidth = Math.max(2.5, size * 0.022);
+      oCtx.lineCap = 'round';
+      angles.forEach(ang => {
+        const spikeLen = bodyR + (size * 0.11) + Math.sin(t * 4.0 + ang * 2) * (size * 0.014);
+        oCtx.beginPath();
+        oCtx.moveTo(cx, cy);
+        oCtx.lineTo(cx + Math.cos(ang) * spikeLen, cy + Math.sin(ang) * spikeLen);
+        oCtx.stroke();
+      });
+    }
 
+    // 体
     oCtx.beginPath();
     oCtx.arc(cx, cy, bodyR, 0, Math.PI * 2);
-    oCtx.fillStyle = PALETTE.PURPLE;
+    oCtx.fillStyle = oColor;
     oCtx.fill();
 
-    const m = getOutwardEyeMotion(t, 0);
+    // 目（通常円・ウニ共通: 白目ごと端に寄る、数px余白あり）
+    const m = getOutwardEyeMotion(t, oSeed);
     const eyeR = bodyR * 0.42;
-    const maxOffset = bodyR - eyeR;
+    const margin_eye = eyeR * 0.08; // 数px余白
+    const maxOffset = bodyR - eyeR - margin_eye;
     const ex = cx + m.ex * maxOffset * 0.98;
     const ey = cy + m.ey * maxOffset * 0.98;
 
@@ -2254,7 +2470,6 @@ function initOpening() {
     oCtx.arc(ex, ey, eyeR, 0, Math.PI * 2);
     oCtx.fillStyle = PALETTE.WHITE;
     oCtx.fill();
-
     oCtx.beginPath();
     oCtx.arc(ex + m.ex * eyeR * 0.55, ey + m.ey * eyeR * 0.55, eyeR * 0.45, 0, Math.PI * 2);
     oCtx.fillStyle = PALETTE.BLUE_P;
@@ -2313,9 +2528,9 @@ function initUI() {
   volSlider.style.setProperty('--pct', '80%');
 
   // Tempo toggle
-  document.querySelectorAll('.tempo-btn').forEach(btn => {
+  document.querySelectorAll('[data-bpm]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.tempo-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('[data-bpm]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const newBpm = parseInt(btn.dataset.bpm);
       CONFIG.BPM = newBpm;
@@ -2323,15 +2538,29 @@ function initUI() {
       if (audio.initialized) {
         audio.updateTiming();
       }
-      // maxAgeを再計算（BPMに依存）
       entities.forEach(e => {
-        // ライフタイム再スケール
         e.maxAge = (30 + Math.random() * 30) * (1000 * (60 / CONFIG.BPM));
       });
     });
   });
 
-  // Background upload
+  // Co-MYAKU population toggle
+  document.querySelectorAll('[data-pop]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-pop]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const mode = btn.dataset.pop;
+      if (mode === 'few') {
+        maxPopAdjusted = 5;
+      } else if (mode === 'lively') {
+        maxPopAdjusted = 16;
+      } else {
+        const areaRatio = (W * H) / (400 * 800);
+        maxPopAdjusted = Math.max(5, Math.min(14, Math.floor(CONFIG.MAX_POP_BASE * Math.sqrt(areaRatio))));
+      }
+    });
+  });
+
   const bgUploadBtn = document.getElementById('bg-upload-btn');
   const bgFileInput = document.getElementById('bg-file-input');
   const bgResetBtn = document.getElementById('bg-reset-btn');
@@ -2384,6 +2613,30 @@ function boot() {
 
 window.addEventListener('resize', () => {
   if (running) { resize(); } else { resizeOpeningCanvas(); }
+});
+
+// Page Visibility API: フォア/バックグラウンド切り替え
+document.addEventListener('visibilitychange', () => {
+  if (!running) return;
+  if (document.visibilityState === 'hidden') {
+    // バックグラウンド: setIntervalでロジックのみ継続（描画なし）
+    if (bgIntervalId) clearInterval(bgIntervalId);
+    bgIntervalId = setInterval(() => {
+      mainLogic(performance.now());
+    }, 16); // ~60fps相当
+  } else {
+    // フォアグラウンド復帰: setIntervalを止めてrAFに戻す
+    if (bgIntervalId) { clearInterval(bgIntervalId); bgIntervalId = null; }
+    if (audio.initialized && audio.ctx.state === 'suspended') {
+      audio.ctx.resume();
+    }
+    // タイミングリセット
+    lastAuto = performance.now();
+    lastNushiCheck = performance.now();
+    entities.forEach(e => { e.lastStep = -1; });
+    if (nushi && nushi.isAlive) nushi.lastStep = -1;
+    requestAnimationFrame(mainLoop);
+  }
 });
 
 boot();
