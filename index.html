@@ -237,10 +237,14 @@ html,body{
 ================================================================ */
 #main{
   position:fixed;inset:0;
-  opacity:0; transition:opacity 1.2s ease;
+  opacity:0;
+  transition:opacity 1.2s ease, background 1.2s ease;
   background: radial-gradient(circle at center, var(--white) 0%, var(--bg) 100%);
 }
 #main.visible{opacity:1;}
+#main.dark-mode{
+  background: radial-gradient(circle at center, #2c2e30 0%, var(--gray-dark) 100%);
+}
 
 #canvas{display:block; position:absolute; inset:0;}
 #touch{position:absolute; inset:0; z-index:5;}
@@ -262,6 +266,15 @@ html,body{
 .pop-val {
   font-family: var(--font-en-body);
   font-size:9px; color:var(--gray-dark); font-variant-numeric: tabular-nums;
+}
+
+/* ダークモード時: 左上のCo-MYAKUカウント表示を明るい文字色に */
+#main.dark-mode .pop-label,
+#main.dark-mode .pop-val {
+  color: var(--gray-light);
+}
+#main.dark-mode .pop-dot {
+  background: var(--blue-light);
 }
 
 /* ================================================================
@@ -339,16 +352,30 @@ html,body{
 .settings-handle { display: none; }
 
 .settings-section {
-  padding: 0 24px 20px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--gray-light);
 }
-.settings-section:last-of-type { border-bottom: 1px solid var(--gray-light); }
+.settings-section:last-of-type { border-bottom: none; }
+
+/* 操作系セクション（Volume/Tempo/Population）は余白を詰めてリズムを出す */
+.settings-section.compact { padding: 16px 24px; }
+
+/* 見た目・付帯情報グループ: 背景色で階層を分ける */
+.settings-group-secondary {
+  background: var(--bg);
+  border-top: 1px solid var(--gray-light);
+}
+.settings-group-secondary .settings-section {
+  border-bottom: 1px solid rgba(210,215,218,0.5);
+}
+.settings-group-secondary .settings-section:last-of-type { border-bottom: none; }
 
 .settings-label {
   font-family: var(--font-en-body);
-  font-size: 9px; font-weight: 700;
-  letter-spacing: 0.4em;
-  color: var(--gray-mid);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--gray-dark);
+  opacity: 0.7;
   margin-bottom: 14px;
   display: block;
 }
@@ -440,6 +467,43 @@ input[type=range].vol-slider::-moz-range-thumb {
 #bg-file-input { display: none; }
 
 /* Credit */
+/* TIME OF DAY / SCALE buttons */
+.scale-auto-row {
+  margin-bottom: 8px;
+}
+.scale-auto-row .scale-btn { width: 100%; }
+.scale-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.scale-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.scale-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding: 10px 4px;
+}
+.scale-btn-label {
+  font-family: var(--font-en-body);
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--gray-mid);
+}
+.scale-btn-sub {
+  font-family: var(--font-en-body);
+  font-size: 8px; font-weight: 400;
+  color: var(--gray-light);
+  font-style: italic;
+}
+.scale-btn.active .scale-btn-label,
+.scale-btn.active .scale-btn-sub {
+  color: var(--white);
+}
+.scale-btn.current-auto {
+  border-color: var(--blue-primary);
+}
+
 .pop-btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 4px; padding-top: 12px; padding-bottom: 8px;
@@ -693,7 +757,7 @@ self.addEventListener('fetch', e => {
     <div class="settings-handle"></div>
 
     <!-- MASTER VOLUME -->
-    <div class="settings-section">
+    <div class="settings-section compact">
       <span class="settings-label">MASTER VOLUME</span>
       <div class="vol-row">
         <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="80">
@@ -702,7 +766,7 @@ self.addEventListener('fetch', e => {
     </div>
 
     <!-- TEMPO -->
-    <div class="settings-section">
+    <div class="settings-section compact">
       <span class="settings-label">TEMPO</span>
       <div class="tempo-toggle">
         <button class="tempo-btn active" data-bpm="120">1/1 (120)</button>
@@ -710,8 +774,29 @@ self.addEventListener('fetch', e => {
       </div>
     </div>
 
+    <!-- TIME OF DAY / SCALE -->
+    <div class="settings-section compact">
+      <span class="settings-label">TIME OF DAY / SCALE</span>
+      <div class="scale-auto-row">
+        <button class="tempo-btn scale-btn active" data-scale="auto">
+          <span class="scale-btn-label">AUTO</span>
+          <span class="scale-btn-sub" id="scale-auto-current">–</span>
+        </button>
+      </div>
+      <div class="scale-grid scale-grid-2">
+        <button class="tempo-btn scale-btn" data-scale="light">
+          <span class="scale-btn-label">LIGHT</span>
+          <span class="scale-btn-sub">Major</span>
+        </button>
+        <button class="tempo-btn scale-btn" data-scale="dark">
+          <span class="scale-btn-label">DARK</span>
+          <span class="scale-btn-sub">Minor</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Co-MYAKU POPULATION -->
-    <div class="settings-section">
+    <div class="settings-section compact">
       <span class="settings-label">Co-MYAKU</span>
       <div class="tempo-toggle">
         <button class="tempo-btn pop-btn" data-pop="few">
@@ -741,22 +826,24 @@ self.addEventListener('fetch', e => {
       </div>
     </div>
 
-    <!-- BACKGROUND PHOTO -->
-    <div class="settings-section">
-      <span class="settings-label">BACKGROUND PHOTO</span>
-      <div class="bg-row">
-        <button class="bg-upload-btn" id="bg-upload-btn">UPLOAD IMAGE</button>
-        <button class="bg-reset-btn" id="bg-reset-btn" title="背景をリセット">BLANK</button>
-        <input type="file" id="bg-file-input" accept="image/*">
+    <div class="settings-group-secondary">
+      <!-- BACKGROUND PHOTO -->
+      <div class="settings-section">
+        <span class="settings-label">BACKGROUND PHOTO</span>
+        <div class="bg-row">
+          <button class="bg-upload-btn" id="bg-upload-btn">UPLOAD IMAGE</button>
+          <button class="bg-reset-btn" id="bg-reset-btn" title="背景をリセット">BLANK</button>
+          <input type="file" id="bg-file-input" accept="image/*">
+        </div>
       </div>
-    </div>
 
-    <!-- CREDIT -->
-    <div class="credit-footer">
-      <span class="credit-line">Presented by: ARPeggioRev2</span>
-      <span class="credit-line">Program assisted by: Gemini &amp; Claude</span>
-      <span class="credit-line credit-version-row">こみゃくのうみ Ver. 1.0.0 <button id="btn-readme" class="info-btn" title="このアプリについて" aria-label="このアプリについて">i</button></span>
-      <span class="credit-line disclaimer">本作品は<a href="https://www.expo2025.or.jp/news/news-20260330-01/" target="_blank" style="color:var(--blue-primary);text-decoration:underline;text-underline-offset:2px;">二次創作ガイドライン</a>に基づき個人制作されたファンアートです。運営団体および公式とは一切関係がありません。</span>
+      <!-- CREDIT -->
+      <div class="credit-footer">
+        <span class="credit-line">Presented by: ARPeggioRev2</span>
+        <span class="credit-line">Program assisted by: Gemini &amp; Claude</span>
+        <span class="credit-line credit-version-row">こみゃくのうみ Ver. 1.0.0 <button id="btn-readme" class="info-btn" title="このアプリについて" aria-label="このアプリについて">i</button></span>
+        <span class="credit-line disclaimer">本作品は<a href="https://www.expo2025.or.jp/news/news-20260330-01/" target="_blank" style="color:var(--blue-primary);text-decoration:underline;text-underline-offset:2px;">二次創作ガイドライン</a>に基づき個人制作されたファンアートです。運営団体および公式とは一切関係がありません。</span>
+      </div>
     </div>
   </div>
 </div>
@@ -769,23 +856,24 @@ self.addEventListener('fetch', e => {
       <button id="btn-readme-close" aria-label="閉じる">&times;</button>
     </div>
     <div id="readme-body">
-      <p>「こみゃくのうみ」は、2025年日本国際博覧会（大阪・関西万博）の「EXPO 2025 Design System」からインスパイアされた、非公式のジェネレーティブ・アンビエント・ファンアート（二次創作）です。<br>海から生まれ、出会い、響き合う「こみゃく」たちの世界。</p>
+      <p>「こみゃくのうみ」は、2025年日本国際博覧会（大阪・関西万博）の「EXPO 2025 Design System」からインスパイアされた、非公式のジェネレーティブ・サウンド・ファンアート（二次創作）です。<br>海から生まれ、出会い、響き合う「こみゃく」たちの世界。</p>
 
       <h3>特徴</h3>
       <h4>ジェネレーティブ・アート</h4>
       <ul>
         <li>こみゃくたちが画面上を自律的に漂う、クラゲのような動き</li>
         <li>個体ごとに異なる誕生・成長・結合（Join）・寿命のライフサイクル</li>
-        <li>一定確率で発生するレア個体「ウニ」</li>
-        <li>稀に出現する超巨大な個体「ヌシ」</li>
+        <li>一定確率で発生する変異個体「ウニ」</li>
+        <li>時折出現する大きな個体「ヌシ」</li>
       </ul>
       <h4>ジェネレーティブ・ミュージック</h4>
       <ul>
         <li>Web Audio APIによるリアルタイム音楽生成</li>
         <li>個体の色ごとに異なる音源（ピアノ・マリンバ・ベース）</li>
         <li>こみゃく同士が結合（Join）すると、和声を伴った特別なフレーズを生成</li>
-        <li>海遊館の大水槽をイメージしたリバーブ（残響）表現</li>
-        <li>ヌシ出現時は専用のコード進行による荘厳な和音演奏</li>
+        <li>巨大な水槽の中にいるようなリバーブ（残響）表現</li>
+        <li>ヌシ出現時は専用のコード進行による荘厳な和音演奏。和音の音圧感に応じて瞳の大きさがゆっくり変化する</li>
+        <li>時刻に応じて曲の調性（メジャー / マイナー）が自動で切り替わる「TIME OF DAY / SCALE」機能</li>
       </ul>
       <h4>PWA対応</h4>
       <ul>
@@ -796,6 +884,7 @@ self.addEventListener('fetch', e => {
       <ul>
         <li>マスターボリューム調整</li>
         <li>テンポ切り替え（BPM 120 / 60）</li>
+        <li>時間帯・調性の切り替え（AUTO / LIGHT / DARK）。DARK時は画面の背景も暗く変化する</li>
         <li>こみゃくの出現数調整（少なめ / 自動 / 多め）</li>
         <li>背景写真のアップロード（HDR画像のトーンマッピング対応）</li>
       </ul>
@@ -824,17 +913,36 @@ self.addEventListener('fetch', e => {
 ================================================================ */
 const dbToGain = (db) => Math.pow(10, db / 20);
 
-// E Major scale frequencies (E3 base)
-const E_MAJOR_SCALE = [
-  164.81, // E3
-  185.00, // F#3
-  207.65, // G#3
-  220.00, // A3
-  246.94, // B3
-  277.18, // C#4
-  311.13, // D#4
-  329.63  // E4
-];
+// ★ TIME OF DAY / SCALE: Eルート固定、LIGHT(Major) / DARK(Minor) の2種
+const SCALES = {
+  light: { // E Major
+    label: 'LIGHT', mode: 'Major',
+    freqs: [164.81, 185.00, 207.65, 220.00, 246.94, 277.18, 311.13, 329.63] // E F# G# A B C# D#
+  },
+  dark: { // E Minor (Aeolian)
+    label: 'DARK', mode: 'Minor',
+    freqs: [164.81, 185.00, 195.99, 220.00, 246.94, 261.63, 293.66, 329.63] // E F# G A B C D
+  }
+};
+
+// 現在選択中のスケールキー（'auto' または固定キー）
+let scaleMode = 'auto';
+
+// 6:00-18:00 = LIGHT、18:00-6:00 = DARK
+function getTimeOfDay(hour) {
+  return (hour >= 6 && hour < 18) ? 'light' : 'dark';
+}
+
+function getActiveScaleKey() {
+  if (scaleMode === 'auto') {
+    return getTimeOfDay(new Date().getHours());
+  }
+  return scaleMode;
+}
+
+function getCurrentScale() {
+  return SCALES[getActiveScaleKey()].freqs;
+}
 
 const CONFIG = {
   R_MIN: 24,
@@ -918,7 +1026,6 @@ class AudioEngine {
     this.reverbGain = null;
     this.convolver = null;
     this.granularBuffer = null;
-    this.scale = E_MAJOR_SCALE;
     this.initialized = false;
     this.beatDuration = BEAT_DURATION;
     this.eighthNote = this.beatDuration / 2;
@@ -1151,7 +1258,8 @@ class AudioEngine {
       if (colorKey === 'PURPLE') {
         resFreq = freq * 2.0;
       } else {
-        resFreq = this.scale[Math.floor(Math.random() * this.scale.length)] * 2.0;
+        const cs = getCurrentScale();
+        resFreq = cs[Math.floor(Math.random() * cs.length)] * 2.0;
       }
       playFn(resFreq, time + 0.005, visibility * 0.4, panner);
     }
@@ -1432,24 +1540,26 @@ function emitBubbles(x, y, color, eyeR, count = 1, isNushi = false) {
 }
 
 /* ================================================================
-   NUSHI CHORD DEFINITIONS (E Major)
-   E→Esus4→Eadd9→C#m7→Aadd9 の5コード、1小節ごとに遷移
+   NUSHI CHORD DEFINITIONS
+   E→[sus4]→[add9]→[vi7]→[IV7] の5コード、1小節ごとに遷移
+   スケール（時間帯）に応じて動的に構築される
 ================================================================ */
-const NUSHI_CHORDS = [
-  // E major: E B G# (ルート・5度・長3度)
-  { name: 'E',     freqs: [164.81, 246.94, 207.65, 329.63] },
-  // Esus4: E B A (ルート・5度・4度)
-  { name: 'Esus4', freqs: [164.81, 246.94, 220.00, 329.63] },
-  // Eadd9: E B G# F# (ルート・5度・長3度・長9度)
-  { name: 'Eadd9', freqs: [164.81, 246.94, 207.65, 185.00] },
-  // C#m7: C# E G# B (ルート・短3度・5度・短7度)
-  { name: 'C#m7',  freqs: [138.59, 164.81, 207.65, 246.94] },
-  // Aadd9: A E C# B (ルート・5度・長3度・長9度)
-  { name: 'Aadd9', freqs: [110.00, 164.81, 138.59, 246.94] },
-];
+// scaleFreqs[7]のインデックス: 0=root 1=2nd 2=3rd 3=4th 4=5th 5=6th 6=7th
+function buildNushiChords(scaleFreqs) {
+  const oct = (freq, mult) => freq * mult;
+  const root = scaleFreqs[0], second = scaleFreqs[1], third = scaleFreqs[2];
+  const fourth = scaleFreqs[3], fifth = scaleFreqs[4], sixth = scaleFreqs[5], seventh = scaleFreqs[6];
+  return [
+    { name: 'I',     freqs: [root, fifth, third, oct(root, 2)] },              // ルート・5度・3度・オクターブ上ルート
+    { name: 'Isus4', freqs: [root, fifth, fourth, oct(root, 2)] },             // 4度サスペンド
+    { name: 'Iadd9', freqs: [root, fifth, third, second] },                    // 9th（2度）追加
+    { name: 'vi7',    freqs: [sixth, root, third, fifth] },                    // 6度ルートの7thコード風
+    { name: 'IV7',    freqs: [fourth, root, oct(third, 0.5), fifth] },         // 4度ルート・スケール3度(1oct下)・5度 = IV上に短7度を重ねた響き
+  ];
+}
 
 /* ================================================================
-   NUSHI（テスト用: 大きめのこみゃくとして中央出現）
+   NUSHI（大きめのこみゃくとして中央出現）
 ================================================================ */
 const NUSHI_SPAWN_PROBABILITY = 0.15;
 
@@ -1489,6 +1599,10 @@ class Nushi {
     this.panner = null;
     this.fadeGain = null;     // アルファ同期フェードゲイン
 
+    // ★ 瞳サイズ: 和音の音圧感（dB合計）に応じて0.45〜0.50の範囲でゆっくり変化
+    this.pupilRatio = 0.45;       // 現在の瞳比率（毎フレーム緩やかに追従）
+    this.targetPupilRatio = 0.45; // 直近の和音音圧から算出した目標比率
+
     if (audio.initialized) {
       this.panner = audio.ctx.createPanner();
       this.panner.panningModel = 'equalpower';
@@ -1516,6 +1630,9 @@ class Nushi {
     const t_sec = ft * 0.001;
     const bpmFreq = getBPMFreq(0.5);
     this.currentPulse = 1 + Math.sin(t_sec * bpmFreq * Math.PI * 2 + this.seed) * 0.012;
+
+    // ★ 瞳サイズを目標値へゆっくり追従（脈動より緩やかなイージング）
+    this.pupilRatio += (this.targetPupilRatio - this.pupilRatio) * 0.015;
 
     if (this.state === 'born') {
       const elapsed = now - this.startTime;
@@ -1581,8 +1698,9 @@ class Nushi {
           }
         }
 
-        // 毎8分音符でコードを鳴らす
-        const chord = NUSHI_CHORDS[this.chordProgression[this.progressionPos]];
+        // 毎8分音符でコードを鳴らす（時間帯スケールに応じて動的構築）
+        const nushiChords = buildNushiChords(getCurrentScale());
+        const chord = nushiChords[this.chordProgression[this.progressionPos]];
         const schedTime = currentStepTotal * NUSHI_BEAT_INTERVAL;
         this.panner.setPosition((this.x / W) * 2 - 1, 0, 1.0);
         this._playChord(chord, schedTime);
@@ -1603,8 +1721,19 @@ class Nushi {
     const isMarimba = (this.colorKey === 'TEAL'   || this.colorKey === 'GREEN');
     const isBass    = (this.colorKey === 'PURPLE');
 
-    // ★ ヌシの音域: 低音色は高域へ、高音色は低域へ広げる
-    // 各色につき2つの倍率を持ち、低域・高域の両方を同時に鳴らす
+    // ★ 和音全体の音圧感（4音 × 2オクターブ分の音量係数合計）を算出し、
+    //   瞳サイズの目標値（0.45〜0.50）を決定。脈動より緩やかに追従させる。
+    let totalVolFactor = 0;
+    chord.freqs.forEach((freq, i) => {
+      const volScale = 1 - i * 0.07;
+      totalVolFactor += volScale * 1.0;   // 低域メイン
+      totalVolFactor += volScale * 0.6;   // 高域サブ
+    });
+    // 経験的な正規化範囲（4音・2重奏の合計はおよそ4.0〜6.4の範囲に収まる）
+    const normalizedVol = Math.min(1, Math.max(0, (totalVolFactor - 4.0) / 2.4));
+    this.targetPupilRatio = 0.45 + normalizedVol * 0.05; // 0.45〜0.50
+
+    // ★ 各色につき2つの倍率を持ち、低域・高域の両方を同時に鳴らす
     let octMults;
     if (this.colorKey === 'BLUE_P')  octMults = [0.5, 2.0];   // E2 + E4
     if (this.colorKey === 'BLUE_L')  octMults = [1.0, 3.0];   // E3 + E5(少し下)
@@ -1732,9 +1861,9 @@ class Nushi {
     targetCtx.fill();
 
     // ★ 瞳（白目中心を基点に getOutwardEyeMotion で動く）
-    // こみゃくと同じ比率: 瞳半径 = 白目半径 * 0.45
+    // 和音の音圧感に応じて 0.45〜0.50 の範囲でゆっくり変化
     const eyeRavg = (eyeRX + eyeRY) / 2;
-    const pupilR = eyeRavg * 0.45;
+    const pupilR = eyeRavg * this.pupilRatio;
     const maxPupilOffset = (eyeRavg - pupilR) * 0.95; // 白目の端近くまで寄る
     const m = getOutwardEyeMotion(t_sec, this.seed);
     const px = m.ex * maxPupilOffset;
@@ -1816,7 +1945,7 @@ class Komyaku {
     this.isUrchin = false;
 
     // ★ Join時のホット/コールド音階プール（個体ごとに独立）
-    this.freqPool = new FrequencyPool(E_MAJOR_SCALE);
+    this.freqPool = new FrequencyPool(getCurrentScale());
 
     // ★ パープル（ベース）のJoin時シーケンス用
     this.bassPattern = null;
@@ -1951,6 +2080,7 @@ class Komyaku {
 
     // --- Audio sequencing ---
     if (audio.initialized && this.panner && isPlaying) {
+      const CS = getCurrentScale(); // ★ 現在のスケール（時間帯によって変化）
       const visibility = (this.state === 'born' ? this.scale : this.alpha) * 0.6;
       const beatInterval = audio.eighthNote;
       const currentStepTotal = Math.floor(nowCtx / beatInterval);
@@ -1966,7 +2096,7 @@ class Komyaku {
 
         // ★ Join時: 毎小節(step0)でコールドプールをリセット → フレーズが常に新鮮
         if (this.partner && stepInMeasure === 0) {
-          this.freqPool = new FrequencyPool(E_MAJOR_SCALE);
+          this.freqPool = new FrequencyPool(getCurrentScale());
         }
 
         if (stepInMeasure === 0 && !this.isRare && (this.partner || this.isJoinCandidate)) {
@@ -2007,7 +2137,7 @@ class Komyaku {
             if (!isJoin) {
               // ソロ: E根音のみ、低密度ランダム
               if (Math.random() > 0.6) {
-                const bassFreq = E_MAJOR_SCALE[0] * 0.25; // E1
+                const bassFreq = CS[0] * 0.25; // E1
                 audio._playWithResonance(audio.playElectricBass.bind(audio), bassFreq, schedTime, visibility, this.panner, false, 'PURPLE');
               }
             } else {
@@ -2015,7 +2145,7 @@ class Komyaku {
               const patIdx = stepInMeasure;
               const degree = this.bassPattern[patIdx];
               let octMult = hasSameNeighbor ? 0.5 : 0.25; // 同色いれば1オクターブ上
-              const bassFreq = E_MAJOR_SCALE[degree] * octMult;
+              const bassFreq = CS[degree] * octMult;
               audio._playWithResonance(audio.playElectricBass.bind(audio), bassFreq, schedTime, visibility, this.panner, true, 'PURPLE');
               // 8ステップ周期でパターン再生成
               if (patIdx === 7) this.generateBassPattern();
@@ -2028,19 +2158,19 @@ class Komyaku {
               const baseScaleIdx = Math.min(7, Math.floor(sizeFactor * 4));
               switch(this.colorKey) {
                 case 'BLUE_L':
-                  freqBase = E_MAJOR_SCALE[baseScaleIdx] * 1.0;
+                  freqBase = CS[baseScaleIdx] * 1.0;
                   audio._playWithResonance(audio.playPiano.bind(audio), freqBase, schedTime, visibility, this.panner, false, this.colorKey);
                   break;
                 case 'BLUE_P':
-                  freqBase = E_MAJOR_SCALE[baseScaleIdx] * 0.5;
+                  freqBase = CS[baseScaleIdx] * 0.5;
                   audio._playWithResonance(audio.playPiano.bind(audio), freqBase, schedTime, visibility, this.panner, false, this.colorKey);
                   break;
                 case 'TEAL':
-                  freqBase = E_MAJOR_SCALE[Math.max(0, Math.min(7, 3 + Math.floor(sizeFactor * 4)))] * 4.0;
+                  freqBase = CS[Math.max(0, Math.min(7, 3 + Math.floor(sizeFactor * 4)))] * 4.0;
                   audio._playWithResonance(audio.playMarimba.bind(audio), freqBase, schedTime, visibility, this.panner, false, this.colorKey);
                   break;
                 case 'GREEN':
-                  freqBase = E_MAJOR_SCALE[Math.min(7, Math.floor(sizeFactor * 4))] * 4.0;
+                  freqBase = CS[Math.min(7, Math.floor(sizeFactor * 4))] * 4.0;
                   audio._playWithResonance(audio.playMarimba.bind(audio), freqBase, schedTime, visibility, this.panner, false, this.colorKey);
                   break;
               }
@@ -2055,35 +2185,35 @@ class Komyaku {
 
               switch(this.colorKey) {
                 case 'BLUE_L':
-                  freqBase = E_MAJOR_SCALE[scaleIdx] * 1.0;
+                  freqBase = CS[scaleIdx] * 1.0;
                   audio._playWithResonance(audio.playPiano.bind(audio), freqBase, schedTime, visibility * densityBonus, this.panner, true, this.colorKey);
                   if (hasSameNeighbor && Math.random() > 0.5) {
                     const altIdx = this.freqPool.pickCold(true);
-                    audio.playPiano(E_MAJOR_SCALE[altIdx] * 2.0, schedTime + 0.02, visibility * 0.3, this.panner);
+                    audio.playPiano(CS[altIdx] * 2.0, schedTime + 0.02, visibility * 0.3, this.panner);
                   }
                   break;
                 case 'BLUE_P':
-                  freqBase = E_MAJOR_SCALE[scaleIdx] * 0.5;
+                  freqBase = CS[scaleIdx] * 0.5;
                   audio._playWithResonance(audio.playPiano.bind(audio), freqBase, schedTime, visibility * densityBonus, this.panner, true, this.colorKey);
                   if (hasSameNeighbor && Math.random() > 0.5) {
                     const altIdx = this.freqPool.pickCold(true);
-                    audio.playPiano(E_MAJOR_SCALE[altIdx] * 1.0, schedTime + 0.02, visibility * 0.3, this.panner);
+                    audio.playPiano(CS[altIdx] * 1.0, schedTime + 0.02, visibility * 0.3, this.panner);
                   }
                   break;
                 case 'TEAL':
-                  freqBase = E_MAJOR_SCALE[scaleIdx] * 4.0;
+                  freqBase = CS[scaleIdx] * 4.0;
                   audio._playWithResonance(audio.playMarimba.bind(audio), freqBase, schedTime, visibility * densityBonus, this.panner, true, this.colorKey);
                   if (hasSameNeighbor && Math.random() > 0.6) {
                     const altIdx = this.freqPool.pickCold(true);
-                    audio.playMarimba(E_MAJOR_SCALE[altIdx] * 4.0, schedTime + 0.03, visibility * 0.35, this.panner);
+                    audio.playMarimba(CS[altIdx] * 4.0, schedTime + 0.03, visibility * 0.35, this.panner);
                   }
                   break;
                 case 'GREEN':
-                  freqBase = E_MAJOR_SCALE[scaleIdx] * 4.0;
+                  freqBase = CS[scaleIdx] * 4.0;
                   audio._playWithResonance(audio.playMarimba.bind(audio), freqBase, schedTime, visibility * densityBonus, this.panner, true, this.colorKey);
                   if (hasSameNeighbor && Math.random() > 0.6) {
                     const altIdx = this.freqPool.pickCold(true);
-                    audio.playMarimba(E_MAJOR_SCALE[altIdx] * 4.0, schedTime + 0.03, visibility * 0.25, this.panner);
+                    audio.playMarimba(CS[altIdx] * 4.0, schedTime + 0.03, visibility * 0.25, this.panner);
                   }
                   break;
               }
@@ -2354,8 +2484,8 @@ class Komyaku {
     const m = getOutwardEyeMotion(t, this.seed);
 
     const currentBodyR = this.r * s;
-    const ex = m.ex * (currentBodyR - eyeR) * 0.98;
-    const ey = m.ey * (currentBodyR - eyeR) * 0.98;
+    const ex = m.ex * (currentBodyR - eyeR) * 0.90;
+    const ey = m.ey * (currentBodyR - eyeR) * 0.90;
     targetCtx.save();
     targetCtx.translate(ex, ey);
     targetCtx.beginPath();
@@ -2749,6 +2879,36 @@ function initUI() {
     });
   });
 
+  // TIME OF DAY / SCALE toggle
+  const scaleAutoLabel = document.getElementById('scale-auto-current');
+  const mainEl = document.getElementById('main');
+  function updateScaleAutoDisplay() {
+    const timeKey = getTimeOfDay(new Date().getHours());
+    scaleAutoLabel.textContent = SCALES[timeKey].label + ' · ' + SCALES[timeKey].mode;
+    // AUTOがアクティブな時のみ、該当する時間帯ボタンをうっすら強調
+    document.querySelectorAll('.scale-btn[data-scale]').forEach(b => {
+      b.classList.remove('current-auto');
+    });
+    if (scaleMode === 'auto') {
+      const currentBtn = document.querySelector(`.scale-btn[data-scale="${timeKey}"]`);
+      if (currentBtn) currentBtn.classList.add('current-auto');
+    }
+    // ★ 実際に有効なスケール（AUTO時は時刻判定、固定時は選択値）でダークモード背景を切替
+    const activeKey = getActiveScaleKey();
+    mainEl.classList.toggle('dark-mode', activeKey === 'dark');
+  }
+  updateScaleAutoDisplay();
+  setInterval(updateScaleAutoDisplay, 60000); // 1分ごとに現在時刻帯を再チェック
+
+  document.querySelectorAll('[data-scale]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-scale]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      scaleMode = btn.dataset.scale;
+      updateScaleAutoDisplay();
+    });
+  });
+
   // Co-MYAKU population toggle
   document.querySelectorAll('[data-pop]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2776,7 +2936,7 @@ function initUI() {
     if (!file) return;
     try {
       bgImage = await loadImageSDR(file);
-      // メインキャンバスの背景をgradientからsolidに
+      // メインキャンバスの背景をgradientからsolidに（インラインでクラスのCSSを上書き）
       document.getElementById('main').style.background = 'none';
     } catch(err) {
       console.error('Background image load failed:', err);
@@ -2786,7 +2946,8 @@ function initUI() {
 
   bgResetBtn.addEventListener('click', () => {
     bgImage = null;
-    document.getElementById('main').style.background = 'radial-gradient(circle at center, var(--white) 0%, var(--bg) 100%)';
+    // インラインstyleを解除し、CSSクラス（LIGHT/DARK）による背景に委ねる
+    document.getElementById('main').style.background = '';
   });
 
 }
